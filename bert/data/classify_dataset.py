@@ -104,8 +104,10 @@ class BertEvalSetByWords(Dataset):
 
 
 if __name__ == '__main__':
-    data = BertDataSetByWords('../../data/train_data/oce_train.txt',
-                              '../../data/classes2num.pickle',
-                              '../../data/words2num.pickle')
-    for x in data:
-        print(x)
+    # data = BertDataSetByWords('../../data/train_data/oce_train.txt',
+    #                           '../../data/classes2num.pickle',
+    #                           '../../data/words2num.pickle')
+    # for x in data:
+    #     y = 1
+    jieba.load_userdict('../../data/key.txt')
+    res = jieba.lcut('娘啊,老板的e-learning课程内容都是全英文视频,英文我也听得懂,但是是印度口音的英语我就做不到了啊!!!臣妾做不到啊!!!还有5个。。今晚把电脑扛回去做课程,我真。。。。	happiness')

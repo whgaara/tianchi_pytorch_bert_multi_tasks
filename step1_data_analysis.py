@@ -31,7 +31,7 @@ class DataAnalysis(object):
         self.sens_len_by_char = []
         self.sens_len_by_words = []
 
-        self.words2num = {'[pad]': 0, '[cls]': 1, '[unk]': '2', '[sep]': 3}
+        self.words2num = {'[pad]': 0, '[cls]': 1, '[unk]': 2, '[sep]': 3}
         self.classes2num = {}
         self.classes2count = {}
         self.classes2sentences = {}
