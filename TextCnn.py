@@ -11,6 +11,30 @@ from torch.utils.data import DataLoader
 from bert.data.classify_dataset import *
 
 
+class FGM(object):
+    def __init__(self, model):
+        self.model = model
+        self.backup = {}
+
+    def attack(self, emb_g, epsilon=0.25, emb_name='embed.weight'):
+        # emb_name这个参数要换成你模型中embedding的参数名
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and emb_name in name:
+                self.backup[name] = param.data.clone()
+                norm = torch.norm(emb_g)
+                if norm != 0 and not torch.isnan(norm):
+                    r_at = epsilon * param.grad / norm
+                    param.data.add_(r_at)
+
+    def restore(self, emb_name='embed.weight'):
+        # emb_name这个参数要换成你模型中embedding的参数名
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and emb_name in name:
+                assert name in self.backup
+                param.data = self.backup[name]
+        self.backup = {}
+
+
 class textCNN(nn.Module):
     def __init__(self, class_num):
         super(textCNN, self).__init__()
@@ -75,10 +99,17 @@ class textCNN(nn.Module):
 
 if __name__ == '__main__':
     with open(C2NPicklePath, 'rb') as f:
+        classes2num = pickle.load(f)
+    num2classes = {}
+    for x, y in classes2num.items():
+        num2classes[y] = x
+
+    with open(C2NPicklePath, 'rb') as f:
         class2num = pickle.load(f)
         labelcount = len(class2num)
 
     model = textCNN(labelcount).to(device)
+    fgm = FGM(model)
 
     testset = BertEvalSetByWords(EvalPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
     dataset = BertDataSetByWords(CorpusPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
@@ -99,12 +130,37 @@ if __name__ == '__main__':
             data = {k: v.to(device) for k, v in data.items()}
             input_token = data['input_token_ids']
             label = data['token_ids_labels']
+
+            # output = model(input_token)
+            # mask_loss = criterion(output, label)
+            # print_loss = mask_loss.item()
+            # optim.zero_grad()
+            # mask_loss.backward()
+            # optim.step()
+
+            # 正常训练
             output = model(input_token)
+            emb_g = None
+
+            def extract(g):
+                global emb_g
+                emb_g = g
+
             mask_loss = criterion(output, label)
+            model.embed.weight.register_hook(extract)
+            mask_loss.backward()
+
+            # 对抗训练，反向传播，并在正常的grad基础上，累加对抗训练的梯度
+            fgm.attack(emb_g)  # 在embedding上添加对抗扰动
+            fgm_output = fgm.model(input_token,)
+            mask_loss = criterion(fgm_output, label)
             print_loss = mask_loss.item()
+            fgm.restore()  # 恢复embedding参数
             optim.zero_grad()
             mask_loss.backward()
             optim.step()
+
+
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
         # save
@@ -120,6 +176,8 @@ if __name__ == '__main__':
             accuracy_count = 0
             for test_data in testset:
                 test_count += 1
+                token_text = output['sentence']
+                current_words = output['cut_words']
                 input_token = test_data['input_token_ids'].unsqueeze(0).to(device)
                 label = test_data['token_ids_labels'].tolist()
                 output = model(input_token)
@@ -129,6 +187,12 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == output_topk[0]:
                     accuracy_count += 1
+                else:
+                    if epoch > 30:
+                        print(token_text)
+                        print(current_words)
+                        print(num2classes[label])
+                        print(num2classes[output_topk[0]])
 
             if test_count:
                 acc_rate = float(accuracy_count) / float(test_count)

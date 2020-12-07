@@ -95,11 +95,13 @@ class BertEvalSetByWords(Dataset):
             tokens_id.append(self.words2num['[pad]'])
 
         segment_ids = [1 if x else 0 for x in tokens_id]
-        output['input_token_ids'] = tokens_id
-        output['segment_ids'] = segment_ids
-        output['token_ids_labels'] = label_text
-        instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
-        return instance
+        output['sentence'] = token_text
+        output['cut_words'] = current_words
+        output['input_token_ids'] = torch.tensor(tokens_id, dtype=torch.long)
+        output['segment_ids'] = torch.tensor(segment_ids, dtype=torch.long)
+        output['token_ids_labels'] = torch.tensor(label_text, dtype=torch.long)
+        # instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
+        return output
 
 
 if __name__ == '__main__':
