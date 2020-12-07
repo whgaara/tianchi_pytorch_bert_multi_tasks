@@ -176,9 +176,7 @@ $
 8%
 80%
 800m
-8300md3200
 85%
-8500md1200
 8dlc
 8g
 8kg
@@ -1293,7 +1291,9 @@ mba
 mc
 mcqueen
 md
+md1200
 md1220
+md3200
 md360
 mdj
 me

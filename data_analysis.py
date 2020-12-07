@@ -17,8 +17,6 @@ class DataAnalysis(object):
         self.t = open('data/source_data/oce_test.csv', 'r', encoding='utf-8')
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
-        self.f_train = open('data/train_data/oce_train.txt', 'w', encoding='utf-8')
-        self.f_eval = open('data/eval_data/oce_eval.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
 
         self.words = []
@@ -143,6 +141,8 @@ class DataAnalysis(object):
         self.g.write('类别数据分部：%s\n' % json.dumps(self.classes2count))
 
     def gen_train_eval(self):
+        self.f_train = open('data/train_data/oce_train.txt', 'w', encoding='utf-8')
+        self.f_eval = open('data/eval_data/oce_eval.txt', 'w', encoding='utf-8')
         for label in self.classes2sentences:
             random.shuffle(self.classes2sentences[label])
             train_len = int(len(self.classes2sentences[label]) * TrainRate)
@@ -159,4 +159,4 @@ if __name__ == '__main__':
     da.print_info()
     # da.check_char()
     da.check_words()
-    da.gen_train_eval()
+    # da.gen_train_eval()
