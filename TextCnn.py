@@ -80,8 +80,8 @@ if __name__ == '__main__':
 
     model = textCNN(labelcount).to(device)
 
-    testset = BertEvalSetByWords(EvalPath, C2NPicklePath, W2NPicklePath)
-    dataset = BertDataSetByWords(CorpusPath, C2NPicklePath, W2NPicklePath)
+    testset = BertEvalSetByWords(EvalPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
+    dataset = BertDataSetByWords(CorpusPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
     dataloader = DataLoader(dataset=dataset, batch_size=BatchSize, shuffle=True, drop_last=False)
 
     optim = Adam(model.parameters(), lr=LearningRate)
