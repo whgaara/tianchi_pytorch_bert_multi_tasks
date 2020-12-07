@@ -8,6 +8,9 @@ from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
 
 
+jieba.load_userdict('data/key.txt')
+
+
 class DataAnalysis(object):
     def __init__(self):
         self.f = open('data/source_data/oce_source.csv', 'r', encoding='utf-8')
@@ -156,4 +159,4 @@ if __name__ == '__main__':
     da.print_info()
     # da.check_char()
     da.check_words()
-    # da.gen_train_eval()
+    da.gen_train_eval()
