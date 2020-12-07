@@ -2,8 +2,9 @@ import re
 import json
 import jieba
 import random
+import pickle
 
-from config import TrainRate
+from config import TrainRate, C2NPicklePath, W2NPicklePath
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
 
@@ -30,6 +31,8 @@ class DataAnalysis(object):
         self.sens_len_by_char = []
         self.sens_len_by_words = []
 
+        self.words2num = {'[pad]': 0, '[cls]': 1, '[unk]': '2', '[sep]': 3}
+        self.classes2num = {}
         self.classes2count = {}
         self.classes2sentences = {}
 
@@ -64,13 +67,15 @@ class DataAnalysis(object):
                     current_words.append('isdigit')
                 else:
                     current_words.append(word)
-
             # self.f_seg.write(sentence+'\n')
             # self.f_seg.write(' '.join(current_words) + '\n')
             # self.f_seg.write('\n')
-
             self.words.extend(current_words)
             #######################
+
+            # 记录label及其编号
+            if label not in self.classes2num:
+                self.classes2num[label] = len(self.classes2num)
 
             # 记录更新后的训练数据集
             if label in self.classes2sentences:
@@ -102,11 +107,9 @@ class DataAnalysis(object):
                     current_words.append('isdigit')
                 else:
                     current_words.append(word)
-
             # self.f_seg.write(sentence + '\n')
             # self.f_seg.write(' '.join(current_words) + '\n')
             # self.f_seg.write('\n')
-
             self.words.extend(current_words)
             self.f_test.write(sentence + '\n')
             #######################
@@ -140,7 +143,10 @@ class DataAnalysis(object):
         with open('data/new_words.txt', 'w', encoding='utf-8') as f:
             for word in self.words:
                 if word:
+                    self.words2num[word] = len(self.words2num)
                     f.write(word + '\n')
+        with open(W2NPicklePath, 'wb') as f:
+            pickle.dump(self.words2num, f)
 
     def print_info(self):
         self.g.write('共有数据总数：%s\n' % len(self.sentences))
@@ -150,6 +156,8 @@ class DataAnalysis(object):
         self.g.write('最长单词文本长度：%s\n' % self.sens_len_by_words[-1])
         self.g.write('共有类别总数：%s\n' % len(self.classes))
         self.g.write('类别数据分部：%s\n' % json.dumps(self.classes2count))
+        with open(C2NPicklePath, 'wb') as f:
+            pickle.dump(self.classes2num, f)
 
     def gen_train_eval(self):
         self.f_train = open('data/train_data/oce_train.txt', 'w', encoding='utf-8')

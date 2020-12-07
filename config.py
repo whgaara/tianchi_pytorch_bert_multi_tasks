@@ -6,12 +6,15 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 
 # ## 模型文件路径 ## #
 SourcePath = 'data/src_data/src_set.csv'
-CorpusPath = 'data/train_data/train_set.csv'
+CorpusPath = 'data/train_data/oce_train.txt'
 TDemoPath = 'data/train_data/train_demo.csv'
 EvalPath = 'data/test_data/eval_set.csv'
 EDemoPath = 'data/test_data/eval_demo.csv'
 TestPath = 'data/test_data/test_a.csv'
-TfidfDictPath = 'data/train_data/tfidfdict.pickle'
+C2NPicklePath = 'data/classes2num.pickle'
+W2NPicklePath = 'data/words2num.pickle'
+WordsVocabPath = 'data/new_words.txt'
+
 
 # 保存最大句长，字符数，类别数
 Assistant = 'data/train_data/assistant.txt'
