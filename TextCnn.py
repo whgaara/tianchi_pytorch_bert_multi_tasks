@@ -98,7 +98,6 @@ if __name__ == '__main__':
         for i, data in data_iter:
             data = {k: v.to(device) for k, v in data.items()}
             input_token = data['input_token_ids']
-            segment_ids = data['segment_ids']
             label = data['token_ids_labels']
             output = model(input_token)
             mask_loss = criterion(output, label)
@@ -122,7 +121,6 @@ if __name__ == '__main__':
             for test_data in testset:
                 test_count += 1
                 input_token = test_data['input_token_ids'].unsqueeze(0).to(device)
-                segment_ids = test_data['segment_ids'].unsqueeze(0).to(device)
                 label = test_data['token_ids_labels'].tolist()
                 output = model(input_token)
                 output_tensor = torch.nn.Softmax(dim=-1)(output)
