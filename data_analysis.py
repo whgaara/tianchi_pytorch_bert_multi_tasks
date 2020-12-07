@@ -18,7 +18,7 @@ class DataAnalysis(object):
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
-        self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
+        # self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
 
         self.words = []
         self.vocabs = []

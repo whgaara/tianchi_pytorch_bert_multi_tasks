@@ -625,7 +625,6 @@ disco
 discuss
 disorder
 distr
-diva
 diy
 dj
 dken
@@ -878,6 +877,7 @@ gle
 gm
 gn
 go
+god
 going
 gold
 good
@@ -1054,6 +1054,7 @@ its
 itself
 ium
 iv
+iva
 ive
 ivy
 iw
@@ -17146,6 +17147,7 @@ zzc
 咕噜
 咕噜咕噜
 咕噜噜
+咕鸡
 咖
 咖呀
 咖啡
@@ -22432,7 +22434,7 @@ zzc
 学员
 学唱
 学壹个
-学大咕
+学大
 学好
 学妹
 学姐
@@ -54418,6 +54420,7 @@ zzc
 赦免
 赫
 赫兹
+赫嘻
 赫大
 赫微信
 赫本
