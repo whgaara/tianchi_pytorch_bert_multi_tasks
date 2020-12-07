@@ -160,7 +160,6 @@ if __name__ == '__main__':
             mask_loss.backward()
             optim.step()
 
-
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
         # save
@@ -176,8 +175,8 @@ if __name__ == '__main__':
             accuracy_count = 0
             for test_data in testset:
                 test_count += 1
-                token_text = output['sentence']
-                current_words = output['cut_words']
+                token_text = test_data['sentence']
+                current_words = test_data['cut_words']
                 input_token = test_data['input_token_ids'].unsqueeze(0).to(device)
                 label = test_data['token_ids_labels'].tolist()
                 output = model(input_token)
