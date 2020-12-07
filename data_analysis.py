@@ -18,6 +18,7 @@ class DataAnalysis(object):
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
+        self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
 
         self.words = []
         self.vocabs = []
@@ -63,6 +64,11 @@ class DataAnalysis(object):
                     current_words.append('isdigit')
                 else:
                     current_words.append(word)
+
+            # self.f_seg.write(sentence+'\n')
+            # self.f_seg.write(' '.join(current_words) + '\n')
+            # self.f_seg.write('\n')
+
             self.words.extend(current_words)
             #######################
 
@@ -96,6 +102,11 @@ class DataAnalysis(object):
                     current_words.append('isdigit')
                 else:
                     current_words.append(word)
+
+            # self.f_seg.write(sentence + '\n')
+            # self.f_seg.write(' '.join(current_words) + '\n')
+            # self.f_seg.write('\n')
+
             self.words.extend(current_words)
             self.f_test.write(sentence + '\n')
             #######################
