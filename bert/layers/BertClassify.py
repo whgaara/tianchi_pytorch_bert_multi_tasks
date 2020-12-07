@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from pretrain_config import *
+from config import *
 from bert.layers.Transformer import Transformer
 from bert.layers.BertEmbeddings import TokenEmbedding, PositionEmbedding, BertEmbeddings
 from bert.layers.Classify import Classify

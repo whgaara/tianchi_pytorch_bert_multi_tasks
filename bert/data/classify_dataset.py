@@ -1,11 +1,10 @@
 import jieba
-import pickle
 
 from config import *
 from torch.utils.data import Dataset
 
 
-jieba.load_userdict('../../data/key.txt')
+jieba.load_userdict('data/key.txt')
 
 
 class BertDataSetByWords(Dataset):
