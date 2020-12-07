@@ -1,17 +1,15 @@
-import jieba
+import pkuseg
 
 from config import *
 from torch.utils.data import Dataset
 
 
-jieba.load_userdict('data/key.txt')
-
-
 class BertDataSetByWords(Dataset):
-    def __init__(self, corpus_path, c2n_pickle_path, w2n_pickle_path):
+    def __init__(self, corpus_path, vocab_path, c2n_pickle_path, w2n_pickle_path):
         self.labels = []
         self.corpus_path = corpus_path
         self.descriptions = []
+        self.pkus = pkuseg.pkuseg(user_dict=vocab_path)
         with open(c2n_pickle_path, 'rb') as f:
             self.classes2num = pickle.load(f)
         with open(w2n_pickle_path, 'rb') as f:
@@ -34,7 +32,7 @@ class BertDataSetByWords(Dataset):
         token_text = self.descriptions[item]
 
         current_words = []
-        for word in jieba.lcut(token_text):
+        for word in self.pkus.cut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
                 current_words.append('isdigit')
             else:
@@ -56,10 +54,11 @@ class BertDataSetByWords(Dataset):
 
 
 class BertEvalSetByWords(Dataset):
-    def __init__(self, eval_path, c2n_pickle_path, w2n_pickle_path):
+    def __init__(self, eval_path, vocab_path, c2n_pickle_path, w2n_pickle_path):
         self.labels = []
         self.corpus_path = eval_path
         self.descriptions = []
+        self.pkus = pkuseg.pkuseg(user_dict=vocab_path)
         with open(c2n_pickle_path, 'rb') as f:
             self.classes2num = pickle.load(f)
         with open(w2n_pickle_path, 'rb') as f:
@@ -82,7 +81,7 @@ class BertEvalSetByWords(Dataset):
         token_text = self.descriptions[item]
 
         current_words = []
-        for word in jieba.lcut(token_text):
+        for word in self.pkus.cut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
                 current_words.append('isdigit')
             else:
@@ -109,5 +108,6 @@ if __name__ == '__main__':
     #                           '../../data/words2num.pickle')
     # for x in data:
     #     y = 1
-    jieba.load_userdict('../../data/key.txt')
-    res = jieba.lcut('娘啊,老板的e-learning课程内容都是全英文视频,英文我也听得懂,但是是印度口音的英语我就做不到了啊!!!臣妾做不到啊!!!还有5个。。今晚把电脑扛回去做课程,我真。。。。	happiness')
+    pk = pkuseg.pkuseg(user_dict='../../data/key.txt')
+    xxx = pk.cut('娘啊,老板的e-learning课程biangbiang面内容都是全英文视频')
+    print(xxx)

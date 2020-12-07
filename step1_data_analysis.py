@@ -1,15 +1,12 @@
 import re
 import json
-import jieba
+import pkuseg
 import random
 import pickle
 
-from config import TrainRate, C2NPicklePath, W2NPicklePath
+from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, WordsVocabPath
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
-
-
-jieba.load_userdict('data/key.txt')
 
 
 class DataAnalysis(object):
@@ -19,6 +16,7 @@ class DataAnalysis(object):
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
+        self.pkus = pkuseg.pkuseg(user_dict=WordsVocabPath)
         # self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
 
         self.words = []
@@ -38,6 +36,7 @@ class DataAnalysis(object):
 
         self.__traverse()
         self.__count()
+        self.__balance()
 
     def __traverse(self):
         for char in self.v:
@@ -62,7 +61,7 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for word in jieba.lcut(sentence):
+            for word in self.pkus.cut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
@@ -102,7 +101,7 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for word in jieba.lcut(sentence):
+            for word in self.pkus.cut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
@@ -128,6 +127,19 @@ class DataAnalysis(object):
             for s_char in self.vocabs + self.missed_chars:
                 if s_char:
                     f.write(s_char + '\n')
+
+    def __balance(self):
+        for label in self.classes2sentences:
+            tmp_list = self.classes2sentences[label]
+            if self.classes2count[label] > BalanceNum:
+                continue
+            else:
+                while True:
+                    if len(tmp_list) >= BalanceNum:
+                        break
+                    random.shuffle(self.classes2sentences[label])
+                    tmp_list = tmp_list + self.classes2sentences[label][:100]
+            self.classes2sentences[label] = tmp_list
 
     def check_char(self):
         for sentence in self.sentences:
@@ -178,4 +190,4 @@ if __name__ == '__main__':
     da.print_info()
     # da.check_char()
     da.check_words()
-    # da.gen_train_eval()
+    da.gen_train_eval()

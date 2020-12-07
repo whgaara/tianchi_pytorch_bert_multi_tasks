@@ -26,6 +26,7 @@ LearningRate = 1e-4
 AttentionMask = True
 HiddenLayerNum = 2
 SentenceLength = 256
+BalanceNum = 5000
 PretrainPath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #
 
