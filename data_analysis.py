@@ -49,7 +49,7 @@ class DataAnalysis(object):
     def __count(self):
         # 对训练数据进行统计
         for line in self.src_lines:
-            _, sentence, label = tuple(line.split('\t'))
+            _, sentence, label = tuple(line.lower().split('\t'))
 
             # ##文本必做预处理操作## #
             # 去除常见的重复标点符号
@@ -57,11 +57,11 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for words in jieba.lcut(sentence):
-                if words.isdigit():
+            for word in jieba.lcut(sentence):
+                if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
-                    current_words.append(words)
+                    current_words.append(word)
             self.words.extend(current_words)
             #######################
 
@@ -82,7 +82,7 @@ class DataAnalysis(object):
 
         # 对测试数据进行统计
         for line in self.test_lines:
-            _, sentence = tuple(line.split('\t'))
+            _, sentence = tuple(line.lower().split('\t'))
 
             # ##文本必做预处理操作## #
             # 去除常见的重复标点符号
@@ -90,17 +90,16 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for words in jieba.lcut(sentence):
-                if words.isdigit():
+            for word in jieba.lcut(sentence):
+                if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
-                    current_words.append(words)
+                    current_words.append(word)
             self.words.extend(current_words)
             self.f_test.write(sentence + '\n')
             #######################
 
             self.sentences.append(sentence)
-            self.words.extend(jieba.lcut(sentence))
             self.sens_len_by_char.append(len(sentence))
             self.sens_len_by_words.append(len(current_words))
 
@@ -156,5 +155,5 @@ if __name__ == '__main__':
     da = DataAnalysis()
     da.print_info()
     # da.check_char()
-    # da.check_words()
-    da.gen_train_eval()
+    da.check_words()
+    # da.gen_train_eval()
