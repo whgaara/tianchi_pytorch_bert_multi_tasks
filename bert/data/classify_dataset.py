@@ -37,7 +37,7 @@ class BertDataSetByWords(Dataset):
         current_words = []
         for word in jieba.lcut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('isdigit')
+                current_words.append('*')
             else:
                 current_words.append(word)
         current_words = ['[cls]'] + current_words
@@ -49,7 +49,7 @@ class BertDataSetByWords(Dataset):
             for i in range(SentenceLength - len(tokens_id)):
                 tokens_id.append(self.words2num['[pad]'])
         else:
-            tokens_id = tokens_id[:128]
+            tokens_id = tokens_id[:SentenceLength]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['input_token_ids'] = tokens_id
@@ -88,7 +88,7 @@ class BertEvalSetByWords(Dataset):
         current_words = []
         for word in jieba.lcut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('isdigit')
+                current_words.append('*')
             else:
                 current_words.append(word)
         current_words = ['[cls]'] + current_words
@@ -100,7 +100,7 @@ class BertEvalSetByWords(Dataset):
             for i in range(SentenceLength - len(tokens_id)):
                 tokens_id.append(self.words2num['[pad]'])
         else:
-            tokens_id = tokens_id[:128]
+            tokens_id = tokens_id[:SentenceLength]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['sentence'] = token_text
@@ -108,7 +108,6 @@ class BertEvalSetByWords(Dataset):
         output['input_token_ids'] = torch.tensor(tokens_id, dtype=torch.long)
         output['segment_ids'] = torch.tensor(segment_ids, dtype=torch.long)
         output['token_ids_labels'] = torch.tensor(label_text, dtype=torch.long)
-        # instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
         return output
 
 
@@ -140,7 +139,7 @@ class BertDataSetByChars(Dataset):
         current_words = []
         for word in jieba.lcut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('isdigit')
+                current_words.append('*')
             else:
                 current_words.append(word)
         new_text = ''.join(current_words)
@@ -186,7 +185,7 @@ class BertEvalSetByChars(Dataset):
         current_words = []
         for word in jieba.lcut(token_text):
             if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('isdigit')
+                current_words.append('*')
             else:
                 current_words.append(word)
         new_text = ''.join(current_words)

@@ -65,7 +65,7 @@ class DataAnalysis(object):
             current_words = []
             for word in jieba.lcut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
-                    current_words.append('isdigit')
+                    current_words.append('*')
                 else:
                     current_words.append(word)
             # self.f_seg.write(sentence+'\n')
@@ -105,7 +105,7 @@ class DataAnalysis(object):
             current_words = []
             for word in jieba.lcut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
-                    current_words.append('isdigit')
+                    current_words.append('*')
                 else:
                     current_words.append(word)
             # self.f_seg.write(sentence + '\n')

@@ -1043,7 +1043,6 @@ is
 is98ts
 iscms
 isdamn
-isdigit
 ish
 isha
 isney
