@@ -50,7 +50,7 @@ if __name__ == '__main__':
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
         # save
-        output_path = PretrainPath + '.ep%d' % epoch
+        output_path = FinetunePath + '.ep%d' % epoch
         torch.save(bert.cpu(), output_path)
         bert.to(device)
         print('EP:%d Model Saved on:%s' % (epoch, output_path))
