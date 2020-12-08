@@ -21,12 +21,12 @@ Assistant = 'data/train_data/assistant.txt'
 
 # ## 训练调试参数开始 ## #
 Epochs = 32
-BatchSize = 16
+BatchSize = 32
 TrainRate = 0.95
 LearningRate = 1e-4
 AttentionMask = True
 HiddenLayerNum = 2
-SentenceLength = 256
+SentenceLength = 128
 BalanceNum = 5000
 PretrainPath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #

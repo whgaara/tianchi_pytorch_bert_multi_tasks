@@ -129,6 +129,8 @@ if __name__ == '__main__':
         for i, data in data_iter:
             data = {k: v.to(device) for k, v in data.items()}
             input_token = data['input_token_ids']
+            for i in range(len(input_token)):
+                input_token[i] = torch.cat((input_token[i][1:], torch.tensor([0]).to(device)))
             label = data['token_ids_labels']
 
             # output = model(input_token)
@@ -178,6 +180,8 @@ if __name__ == '__main__':
                 token_text = test_data['sentence']
                 current_words = test_data['cut_words']
                 input_token = test_data['input_token_ids'].unsqueeze(0).to(device)
+                for i in range(len(input_token)):
+                    input_token[i] = torch.cat((input_token[i][1:], torch.tensor([0]).to(device)))
                 label = test_data['token_ids_labels'].tolist()
                 output = model(input_token)
                 output_tensor = torch.nn.Softmax(dim=-1)(output)

@@ -43,8 +43,11 @@ class BertDataSetByWords(Dataset):
         tokens_id = []
         for word in current_words:
             tokens_id.append(self.words2num.get(word, self.words2num['[unk]']))
-        for i in range(SentenceLength - len(tokens_id)):
-            tokens_id.append(self.words2num['[pad]'])
+        if len(tokens_id) < SentenceLength:
+            for i in range(SentenceLength - len(tokens_id)):
+                tokens_id.append(self.words2num['[pad]'])
+        else:
+            tokens_id = tokens_id[:128]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['input_token_ids'] = tokens_id
@@ -92,8 +95,11 @@ class BertEvalSetByWords(Dataset):
         tokens_id = []
         for word in current_words:
             tokens_id.append(self.words2num.get(word, self.words2num['[unk]']))
-        for i in range(SentenceLength - len(tokens_id)):
-            tokens_id.append(self.words2num['[pad]'])
+        if len(tokens_id) < SentenceLength:
+            for i in range(SentenceLength - len(tokens_id)):
+                tokens_id.append(self.words2num['[pad]'])
+        else:
+            tokens_id = tokens_id[:128]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['sentence'] = token_text
