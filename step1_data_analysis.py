@@ -1,12 +1,15 @@
 import re
 import json
-import pkuseg
+import jieba
 import random
 import pickle
 
-from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, WordsVocabPath
+from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, UserDict, WordsVocabPath
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
+
+
+jieba.load_userdict(UserDict)
 
 
 class DataAnalysis(object):
@@ -16,7 +19,6 @@ class DataAnalysis(object):
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
-        self.pkus = pkuseg.pkuseg(user_dict=WordsVocabPath)
         # self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
 
         self.words = []
@@ -61,7 +63,7 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for word in self.pkus.cut(sentence):
+            for word in jieba.lcut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
@@ -101,7 +103,7 @@ class DataAnalysis(object):
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
-            for word in self.pkus.cut(sentence):
+            for word in jieba.lcut(sentence):
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('isdigit')
                 else:
@@ -152,7 +154,7 @@ class DataAnalysis(object):
         self.__gen_new_vocab()
 
     def check_words(self):
-        with open('data/new_words.txt', 'w', encoding='utf-8') as f:
+        with open(WordsVocabPath, 'w', encoding='utf-8') as f:
             for word in self.words:
                 if word:
                     self.words2num[word] = len(self.words2num)

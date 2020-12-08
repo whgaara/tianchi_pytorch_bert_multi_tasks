@@ -6,6 +6,7 @@ cuda_condition = torch.cuda.is_available()
 device = torch.device('cuda:0' if cuda_condition else 'cpu')
 
 # ## 模型文件路径 ## #
+UserDict = 'data/key.txt'
 CorpusPath = 'data/train_data/oce_train.txt'
 EvalPath = 'data/eval_data/oce_eval.txt'
 TestPath = 'data/eval_data/oce_test.csv'
