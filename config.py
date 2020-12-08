@@ -9,17 +9,18 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 CorpusPath = 'data/train_data/oce_train.txt'
 # TDemoPath = 'data/train_data/train_demo.csv'
 EvalPath = 'data/eval_data/oce_eval.txt'
-# EDemoPath = 'data/test_data/eval_demo.csv'
-TestPath = 'data/test_data/oce_test.csv'
+# EDemoPath = 'data/eval_data/eval_demo.csv'
+TestPath = 'data/eval_data/oce_test.csv'
 C2NPicklePath = 'data/classes2num.pickle'
 W2NPicklePath = 'data/words2num.pickle'
 WordsVocabPath = 'data/new_words.txt'
+CharsVocabPath = 'data/new_vocab.txt'
 
 # 保存最大句长，字符数，类别数
 Assistant = 'data/train_data/assistant.txt'
 
 # ## 训练调试参数开始 ## #
-Epochs = 16
+Epochs = 32
 BatchSize = 16
 TrainRate = 0.95
 LearningRate = 1e-4

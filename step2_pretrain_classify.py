@@ -17,8 +17,12 @@ if __name__ == '__main__':
 
     bert = BertClassify(kinds_num=labelcount).to(device)
 
-    testset = BertEvalSetByWords(EvalPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
-    dataset = BertDataSetByWords(CorpusPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
+    # 使用分词训练
+    # evalset = BertEvalSetByWords(EvalPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
+    # dataset = BertDataSetByWords(CorpusPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
+    # 使用分字训练
+    evalset = BertEvalSetByChars(EvalPath, CharsVocabPath, C2NPicklePath)
+    dataset = BertDataSetByChars(CorpusPath, CharsVocabPath, C2NPicklePath)
     dataloader = DataLoader(dataset=dataset, batch_size=BatchSize, shuffle=True, drop_last=False)
 
     optim = Adam(bert.parameters(), lr=LearningRate)
@@ -56,11 +60,11 @@ if __name__ == '__main__':
             bert.eval()
             test_count = 0
             accuracy_count = 0
-            for test_data in testset:
+            for eval_data in evalset:
                 test_count += 1
-                input_token = test_data['input_token_ids'].unsqueeze(0).to(device)
-                segment_ids = test_data['segment_ids'].unsqueeze(0).to(device)
-                label = test_data['token_ids_labels'].tolist()
+                input_token = eval_data['input_token_ids'].unsqueeze(0).to(device)
+                segment_ids = eval_data['segment_ids'].unsqueeze(0).to(device)
+                label = eval_data['token_ids_labels'].tolist()
                 output = bert(input_token, segment_ids)
                 output_tensor = torch.nn.Softmax(dim=-1)(output)
                 output_topk = torch.topk(output_tensor, 1).indices.squeeze(0).tolist()
