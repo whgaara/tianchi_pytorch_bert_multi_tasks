@@ -12,8 +12,11 @@ from bert.layers.BertClassify import BertClassify
 
 if __name__ == '__main__':
     with open(C2NPicklePath, 'rb') as f:
-        class2num = pickle.load(f)
-        labelcount = len(class2num)
+        classes2num = pickle.load(f)
+        labelcount = len(classes2num)
+        num2classes = {}
+        for x, y in classes2num.items():
+            num2classes[y] = x
 
     bert = BertClassify(kinds_num=labelcount).to(device)
 
@@ -62,6 +65,7 @@ if __name__ == '__main__':
             accuracy_count = 0
             for eval_data in evalset:
                 test_count += 1
+                sentence = eval_data['sentence']
                 input_token = eval_data['input_token_ids'].unsqueeze(0).to(device)
                 segment_ids = eval_data['segment_ids'].unsqueeze(0).to(device)
                 label = eval_data['token_ids_labels'].tolist()
@@ -72,6 +76,11 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == output_topk[0]:
                     accuracy_count += 1
+                else:
+                    if epoch > 30:
+                        print(sentence)
+                        print('gt：', num2classes[label])
+                        print('inf：', num2classes[output_topk[0]])
 
             if test_count:
                 acc_rate = float(accuracy_count) / float(test_count)
