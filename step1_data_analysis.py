@@ -5,11 +5,15 @@ import random
 import pickle
 
 from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, UserDict, WordsVocabPath, EmojiPicklePath
+from config import StopDict
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
 
 
 jieba.load_userdict(UserDict)
+with open(StopDict, 'r', encoding='utf-8') as f:
+    stop_list = f.readlines()
+    stop_list = [x.strip() for x in stop_list]
 
 
 class DataAnalysis(object):
@@ -35,7 +39,6 @@ class DataAnalysis(object):
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
         self.f_test = open('data/test_data/oce_test.txt', 'w', encoding='utf-8')
-        # self.f_seg = open('data/segments.txt', 'w', encoding='utf-8')
 
         self.words = []
         self.vocabs = []
@@ -84,14 +87,13 @@ class DataAnalysis(object):
             # 使用数字符号代替纯数字
             current_words = []
             for word in jieba.lcut(sentence):
+                if word in stop_list:
+                    continue
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            # self.f_seg.write(sentence+'\n')
-            # self.f_seg.write(' '.join(current_words) + '\n')
-            # self.f_seg.write('\n')
-            sentence = ''.join(current_words)
+            sentence = ' '.join(current_words)
             self.words.extend(current_words)
             ###################################################################
 
@@ -129,14 +131,13 @@ class DataAnalysis(object):
             # 使用数字符号代替纯数字
             current_words = []
             for word in jieba.lcut(sentence):
+                if word in stop_list:
+                    continue
                 if word.isdigit() or word.replace('.', '').isdigit():
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            # self.f_seg.write(sentence + '\n')
-            # self.f_seg.write(' '.join(current_words) + '\n')
-            # self.f_seg.write('\n')
-            sentence = ''.join(current_words)
+            sentence = ' '.join(current_words)
             self.words.extend(current_words)
             self.f_test.write(sentence + '\n')
             ###################################################################

@@ -1,14 +1,6 @@
-import jieba
-
 from config import *
 from torch.utils.data import Dataset
 from bert.common.tokenizers import Tokenizer
-
-
-jieba.load_userdict(UserDict)
-with open(StopDict, 'r', encoding='utf-8') as f:
-    stop_list = f.readlines()
-    stop_list = [x.strip() for x in stop_list]
 
 
 class BertDataSetByWords(Dataset):
@@ -36,12 +28,8 @@ class BertDataSetByWords(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-        current_words = jieba.lcut(token_text)
-        new_words = []
-        for word in current_words:
-            if word not in stop_list:
-                new_words.append(word)
-        current_words = ['[cls]'] + new_words
+        current_words = token_text.split(' ')
+        current_words = ['[cls]'] + current_words
 
         tokens_id = []
         for word in current_words:
@@ -85,12 +73,8 @@ class BertEvalSetByWords(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-        current_words = jieba.lcut(token_text)
-        new_words = []
-        for word in current_words:
-            if word not in stop_list:
-                new_words.append(word)
-        current_words = ['[cls]'] + new_words
+        current_words = token_text.split(' ')
+        current_words = ['[cls]'] + current_words
 
         tokens_id = []
         for word in current_words:
@@ -134,9 +118,7 @@ class BertDataSetByChars(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-
-        current_words = jieba.lcut(token_text)
-        new_text = ''.join(current_words)
+        new_text = token_text.replace(' ', '')
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))
         tokens_id = [101] + tokens_id
 
@@ -175,9 +157,7 @@ class BertEvalSetByChars(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-
-        current_words = jieba.lcut(token_text)
-        new_text = ''.join(current_words)
+        new_text = token_text.replace(' ', '')
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))
         tokens_id = [101] + tokens_id
 
@@ -193,17 +173,6 @@ class BertEvalSetByChars(Dataset):
 
 
 if __name__ == '__main__':
-    # data = BertDataSetByWords('../../data/train_data/oce_train.txt',
-    #                           '../../data/classes2num.pickle',
-    #                           '../../data/words2num.pickle')
-    # for x in data:
-    #     y = 1
-
-    # import pkuseg
-    # pk = pkuseg.pkuseg(user_dict='../../data/key.txt')
-    # xxx = pk.cut('(╯□╰)happinessislikeapebble1droppedintoapooltosetinmotionanever-wideningcircleofripples2.asstevensonhassaid,"beinghappyisaduty."快乐好似掷入池塘里的一枚鹅卵石,会激起不断扩散的一圈圈涟漪。斯蒂文生曾说过:“快乐是一种责任。”[求关注]')
-    # print(xxx)
-
     x = 1
     import jieba
     jieba.load_userdict('../../data/key.txt')
