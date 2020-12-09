@@ -4,7 +4,7 @@ import jieba
 import random
 import pickle
 
-from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, UserDict, WordsVocabPath
+from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, UserDict, WordsVocabPath, EmojiPicklePath
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
 
@@ -14,6 +14,22 @@ jieba.load_userdict(UserDict)
 
 class DataAnalysis(object):
     def __init__(self):
+        # 替换符号表情
+        emojis = set()
+        with open('data/expression_chars.txt', 'r', encoding='utf-8') as f:
+            for word in f:
+                if word:
+                    word = word.strip()
+                    emojis.add(word)
+        emojis = list(emojis)
+        self.emojis_dict = {}
+        for i, emoji in enumerate(emojis):
+            self.emojis_dict[emoji] = 'charexpress' + str(i)
+        print('!!!如果表情符号新增，注意新增key.txt中的表情符号编码!!!\n')
+
+        with open(EmojiPicklePath, 'wb') as f:
+            pickle.dump(self.emojis_dict, f)
+
         self.f = open('data/source_data/oce_source.csv', 'r', encoding='utf-8')
         self.t = open('data/source_data/oce_test.csv', 'r', encoding='utf-8')
         self.v = open('data/vocab.txt', 'r', encoding='utf-8')
@@ -57,9 +73,13 @@ class DataAnalysis(object):
         for line in self.src_lines:
             _, sentence, label = tuple(line.lower().split('\t'))
 
-            # ##文本必做预处理操作## #
+            # ########################文本必做预处理操作######################## #
+            # 使用专用符号代替符号表情
+            for emoji in self.emojis_dict:
+                if emoji in sentence:
+                    sentence = sentence.replace(emoji, self.emojis_dict[emoji])
             # 去除常见的重复标点符号
-            sentence = re.sub(r"([%s])+" % str_punctuation, r"\1", sentence)
+            sentence = re.sub(r"([%s])+" % str_punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', ''), r"\1", sentence)
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
@@ -71,8 +91,9 @@ class DataAnalysis(object):
             # self.f_seg.write(sentence+'\n')
             # self.f_seg.write(' '.join(current_words) + '\n')
             # self.f_seg.write('\n')
+            sentence = ''.join(current_words)
             self.words.extend(current_words)
-            #######################
+            ###################################################################
 
             # 记录label及其编号
             if label not in self.classes2num:
@@ -97,9 +118,13 @@ class DataAnalysis(object):
         for line in self.test_lines:
             _, sentence = tuple(line.lower().split('\t'))
 
-            # ##文本必做预处理操作## #
+            # ########################文本必做预处理操作######################## #
+            # 使用专用符号代替符号表情
+            for emoji in self.emojis_dict:
+                if emoji in sentence:
+                    sentence = sentence.replace(emoji, self.emojis_dict[emoji])
             # 去除常见的重复标点符号
-            sentence = re.sub(r"([%s])+" % str_punctuation, r"\1", sentence)
+            sentence = re.sub(r"([%s])+" % str_punctuation.replace('[', '').replace(']', '').replace('(', '').replace(')', ''), r"\1", sentence)
             sentence = re.sub(r"([%s])+" % zhon_punctuation, r"\1", sentence)
             # 使用数字符号代替纯数字
             current_words = []
@@ -111,9 +136,10 @@ class DataAnalysis(object):
             # self.f_seg.write(sentence + '\n')
             # self.f_seg.write(' '.join(current_words) + '\n')
             # self.f_seg.write('\n')
+            sentence = ''.join(current_words)
             self.words.extend(current_words)
             self.f_test.write(sentence + '\n')
-            #######################
+            ###################################################################
 
             self.sentences.append(sentence)
             self.sens_len_by_char.append(len(sentence))

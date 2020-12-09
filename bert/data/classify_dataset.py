@@ -34,12 +34,13 @@ class BertDataSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        current_words = []
-        for word in jieba.lcut(token_text):
-            if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('*')
-            else:
-                current_words.append(word)
+        # current_words = []
+        # for word in jieba.lcut(token_text):
+        #     if word.isdigit() or word.replace('.', '').isdigit():
+        #         current_words.append('*')
+        #     else:
+        #         current_words.append(word)
+        current_words = jieba.lcut(token_text)
         current_words = ['[cls]'] + current_words
 
         tokens_id = []
@@ -85,12 +86,13 @@ class BertEvalSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        current_words = []
-        for word in jieba.lcut(token_text):
-            if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('*')
-            else:
-                current_words.append(word)
+        # current_words = []
+        # for word in jieba.lcut(token_text):
+        #     if word.isdigit() or word.replace('.', '').isdigit():
+        #         current_words.append('*')
+        #     else:
+        #         current_words.append(word)
+        current_words = jieba.lcut(token_text)
         current_words = ['[cls]'] + current_words
 
         tokens_id = []
@@ -136,12 +138,13 @@ class BertDataSetByChars(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        current_words = []
-        for word in jieba.lcut(token_text):
-            if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('*')
-            else:
-                current_words.append(word)
+        # current_words = []
+        # for word in jieba.lcut(token_text):
+        #     if word.isdigit() or word.replace('.', '').isdigit():
+        #         current_words.append('*')
+        #     else:
+        #         current_words.append(word)
+        current_words = jieba.lcut(token_text)
         new_text = ''.join(current_words)
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))
         tokens_id = [101] + tokens_id
@@ -182,12 +185,13 @@ class BertEvalSetByChars(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        current_words = []
-        for word in jieba.lcut(token_text):
-            if word.isdigit() or word.replace('.', '').isdigit():
-                current_words.append('*')
-            else:
-                current_words.append(word)
+        # current_words = []
+        # for word in jieba.lcut(token_text):
+        #     if word.isdigit() or word.replace('.', '').isdigit():
+        #         current_words.append('*')
+        #     else:
+        #         current_words.append(word)
+        current_words = jieba.lcut(token_text)
         new_text = ''.join(current_words)
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))
         tokens_id = [101] + tokens_id
@@ -209,14 +213,14 @@ if __name__ == '__main__':
     #                           '../../data/words2num.pickle')
     # for x in data:
     #     y = 1
-    import pkuseg
-    pk = pkuseg.pkuseg(user_dict='../../data/key.txt')
-    # xxx = pk.cut('娘啊,老板的e-learning课程biangbiang面内容都是全英文视频')
-    xxx = pk.cut('下午陪翠茹去荣彬家的相馆咨询她妈妈的写真,店里人纷纷以为我俩打算拍婚纱照,猛点鸳鸯谱[纠结]搞得伦家脸都红掉咯!好害羞的内!伦家和翠茹是好基友了啦[求关注]')
-    print(xxx)
 
+    # import pkuseg
+    # pk = pkuseg.pkuseg(user_dict='../../data/key.txt')
+    # xxx = pk.cut('(╯□╰)happinessislikeapebble1droppedintoapooltosetinmotionanever-wideningcircleofripples2.asstevensonhassaid,"beinghappyisaduty."快乐好似掷入池塘里的一枚鹅卵石,会激起不断扩散的一圈圈涟漪。斯蒂文生曾说过:“快乐是一种责任。”[求关注]')
+    # print(xxx)
+
+    x = 1
     import jieba
     jieba.load_userdict('../../data/key.txt')
-    # xxx = jieba.lcut('娘啊,老板的e-learning课程biangbiang面内容都是全英文视频')
-    xxx = jieba.lcut('下午陪翠茹去荣彬家的相馆咨询她妈妈的写真,店里人纷纷以为我俩打算拍婚纱照,猛点鸳鸯谱[纠结]搞得伦家脸都红掉咯!好害羞的内!伦家和翠茹是好基友了啦[求关注]')
+    xxx = jieba.lcut('expression1orz(╯□╰)happinessislikeapebble1droppedintoapooltosetinmotionanever-wideningcircleofripples2.asstevensonhassaid,"beinghappyisaduty."快乐好似掷入池塘里的一枚鹅卵石,会激起不断扩散的一圈圈涟漪。斯蒂文生曾说过:“快乐是一种责任。”[求关注]')
     print(xxx)

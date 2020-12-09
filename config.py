@@ -12,6 +12,7 @@ EvalPath = 'data/eval_data/oce_eval.txt'
 TestPath = 'data/eval_data/oce_test.csv'
 C2NPicklePath = 'data/classes2num.pickle'
 W2NPicklePath = 'data/words2num.pickle'
+EmojiPicklePath = 'data/emoji.pickle'
 WordsVocabPath = 'data/new_words.txt'
 CharsVocabPath = 'data/new_vocab.txt'
 
