@@ -6,6 +6,9 @@ from bert.common.tokenizers import Tokenizer
 
 
 jieba.load_userdict(UserDict)
+with open(StopDict, 'r', encoding='utf-8') as f:
+    stop_list = f.readlines()
+    stop_list = [x.strip() for x in stop_list]
 
 
 class BertDataSetByWords(Dataset):
@@ -33,15 +36,12 @@ class BertDataSetByWords(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-
-        # current_words = []
-        # for word in jieba.lcut(token_text):
-        #     if word.isdigit() or word.replace('.', '').isdigit():
-        #         current_words.append('*')
-        #     else:
-        #         current_words.append(word)
         current_words = jieba.lcut(token_text)
-        current_words = ['[cls]'] + current_words
+        new_words = []
+        for word in current_words:
+            if word not in stop_list:
+                new_words.append(word)
+        current_words = ['[cls]'] + new_words
 
         tokens_id = []
         for word in current_words:
@@ -85,15 +85,12 @@ class BertEvalSetByWords(Dataset):
         output = {}
         label_text = self.labels[item]
         token_text = self.descriptions[item]
-
-        # current_words = []
-        # for word in jieba.lcut(token_text):
-        #     if word.isdigit() or word.replace('.', '').isdigit():
-        #         current_words.append('*')
-        #     else:
-        #         current_words.append(word)
         current_words = jieba.lcut(token_text)
-        current_words = ['[cls]'] + current_words
+        new_words = []
+        for word in current_words:
+            if word not in stop_list:
+                new_words.append(word)
+        current_words = ['[cls]'] + new_words
 
         tokens_id = []
         for word in current_words:
@@ -138,12 +135,6 @@ class BertDataSetByChars(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        # current_words = []
-        # for word in jieba.lcut(token_text):
-        #     if word.isdigit() or word.replace('.', '').isdigit():
-        #         current_words.append('*')
-        #     else:
-        #         current_words.append(word)
         current_words = jieba.lcut(token_text)
         new_text = ''.join(current_words)
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))
@@ -185,12 +176,6 @@ class BertEvalSetByChars(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
 
-        # current_words = []
-        # for word in jieba.lcut(token_text):
-        #     if word.isdigit() or word.replace('.', '').isdigit():
-        #         current_words.append('*')
-        #     else:
-        #         current_words.append(word)
         current_words = jieba.lcut(token_text)
         new_text = ''.join(current_words)
         tokens_id = self.tokenizer.tokens_to_ids(list(new_text))

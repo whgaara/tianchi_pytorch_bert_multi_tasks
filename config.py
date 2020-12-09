@@ -7,6 +7,7 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 
 # ## 模型文件路径 ## #
 UserDict = 'data/key.txt'
+StopDict = 'data/stop.txt'
 CorpusPath = 'data/train_data/oce_train.txt'
 EvalPath = 'data/eval_data/oce_eval.txt'
 TestPath = 'data/eval_data/oce_test.csv'
@@ -26,7 +27,7 @@ TrainRate = 0.95
 LearningRate = 1e-4
 AttentionMask = True
 HiddenLayerNum = 2
-SentenceLength = 256
+SentenceLength = 128
 BalanceNum = 5000
 FinetunePath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #
@@ -35,12 +36,12 @@ FinetunePath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 DropOut = 0.1
 try:
     # 使用分词训练
-    # with open(W2NPicklePath, 'rb') as f:
-    #     words2num = pickle.load(f)
-    #     VocabSize = len(words2num)
+    with open(W2NPicklePath, 'rb') as f:
+        words2num = pickle.load(f)
+        VocabSize = len(words2num)
 
     # 使用分字训练
-    VocabSize = len(open(CharsVocabPath, 'r', encoding='utf-8').readlines())
+    # VocabSize = len(open(CharsVocabPath, 'r', encoding='utf-8').readlines())
 except:
     VocabSize = 0
 HiddenSize = 768

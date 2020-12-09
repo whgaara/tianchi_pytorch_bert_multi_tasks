@@ -21,11 +21,11 @@ if __name__ == '__main__':
     bert = BertClassify(kinds_num=labelcount).to(device)
 
     # 使用分词训练
-    # evalset = BertEvalSetByWords(EvalPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
-    # dataset = BertDataSetByWords(CorpusPath, WordsVocabPath, C2NPicklePath, W2NPicklePath)
+    evalset = BertEvalSetByWords(EvalPath, C2NPicklePath, W2NPicklePath)
+    dataset = BertDataSetByWords(CorpusPath, C2NPicklePath, W2NPicklePath)
     # 使用分字训练
-    evalset = BertEvalSetByChars(EvalPath, CharsVocabPath, C2NPicklePath)
-    dataset = BertDataSetByChars(CorpusPath, CharsVocabPath, C2NPicklePath)
+    # evalset = BertEvalSetByChars(EvalPath, CharsVocabPath, C2NPicklePath)
+    # dataset = BertDataSetByChars(CorpusPath, CharsVocabPath, C2NPicklePath)
     dataloader = DataLoader(dataset=dataset, batch_size=BatchSize, shuffle=True, drop_last=False)
 
     optim = Adam(bert.parameters(), lr=LearningRate)
