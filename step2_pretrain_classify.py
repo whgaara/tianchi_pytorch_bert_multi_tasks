@@ -65,6 +65,9 @@ if __name__ == '__main__':
         print_loss = 0.0
 
         for (i, oce_data), (j, ocn_data), (k, tnews_data) in zip(oce_data_iter, ocn_data_iter, tnews_data_iter):
+            if i == min(len(oce_data_iter), len(ocn_data_iter), len(tnews_data_iter)) - 1:
+                break
+
             oce_data = {k: v.to(device) for k, v in oce_data.items()}
             ocn_data = {k: v.to(device) for k, v in ocn_data.items()}
             tnews_data = {k: v.to(device) for k, v in tnews_data.items()}
@@ -134,7 +137,7 @@ if __name__ == '__main__':
             tnews_label_list += tnews_label
 
             # 调试验证部分
-            break
+            # break
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
@@ -148,10 +151,10 @@ if __name__ == '__main__':
         print(epoch, 'average f1 is:', avg_f1)
 
         # save
-        # output_path = FinetunePath + '.ep%d' % epoch
-        # torch.save(bert.cpu(), output_path)
-        # bert.to(device)
-        # print('EP:%d Model Saved on:%s' % (epoch, output_path))
+        output_path = FinetunePath + '.ep%d' % epoch
+        torch.save(bert.cpu(), output_path)
+        bert.to(device)
+        print('EP:%d Model Saved on:%s' % (epoch, output_path))
 
         # test
         bert.eval()
