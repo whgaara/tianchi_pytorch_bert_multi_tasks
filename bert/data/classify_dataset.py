@@ -60,11 +60,11 @@ class BertEvalSetByWords(Dataset):
         self.labels = []
         self.corpus_path = eval_path
         self.descriptions = []
-        if self.corpus_path == OceTrainPath:
+        if self.corpus_path == OceEvalPath:
             self.type_id = 0
-        if self.corpus_path == OcnTrainPath:
+        if self.corpus_path == OcnEvalPath:
             self.type_id = 1
-        if self.corpus_path == TnewsTrainPath:
+        if self.corpus_path == TnewsEvalPath:
             self.type_id = 2
         with open(c2n_pickle_path, 'rb') as f:
             self.classes2num = pickle.load(f)
@@ -99,7 +99,7 @@ class BertEvalSetByWords(Dataset):
             tokens_id = tokens_id[:SentenceLength]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
-        output['type_id'] = [self.type_id]
+        output['type_id'] = torch.tensor([self.type_id], dtype=torch.long)
         output['sentence'] = token_text
         output['cut_words'] = current_words
         output['input_token_ids'] = torch.tensor(tokens_id, dtype=torch.long)

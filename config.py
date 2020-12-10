@@ -33,7 +33,7 @@ Epochs = 32
 TrainRate = 0.95
 LearningRate = 5e-5
 AttentionMask = True
-HiddenLayerNum = 6
+HiddenLayerNum = 2
 SentenceLength = 128
 BalanceNum = 5000
 # 计算BatchSize
