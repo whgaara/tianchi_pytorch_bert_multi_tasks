@@ -175,7 +175,7 @@ if __name__ == '__main__':
             # oce验证部分
             for eval_data in oce_eval_set:
                 oce_total += 1
-                type_id = eval_data['type_id']
+                type_id = eval_data['type_id'].to(device)
                 sentence = eval_data['sentence']
                 input_token = eval_data['input_token_ids'].unsqueeze(0).to(device)
                 segment_ids = eval_data['segment_ids'].unsqueeze(0).to(device)
@@ -195,6 +195,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == oce_topk:
                     oce_correct += 1
+                # break
             acc_rate = float(oce_correct) / float(oce_total)
             acc_rate = round(acc_rate, 2)
             print('oce验证集正确率：%s' % acc_rate)
@@ -202,7 +203,7 @@ if __name__ == '__main__':
             # ocn验证部分
             for eval_data in ocn_eval_set:
                 ocn_total += 1
-                type_id = eval_data['type_id']
+                type_id = eval_data['type_id'].to(device)
                 sentence = eval_data['sentence']
                 input_token = eval_data['input_token_ids'].unsqueeze(0).to(device)
                 segment_ids = eval_data['segment_ids'].unsqueeze(0).to(device)
@@ -222,6 +223,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == ocn_topk:
                     ocn_correct += 1
+                # break
             acc_rate = float(ocn_correct) / float(ocn_total)
             acc_rate = round(acc_rate, 2)
             print('ocn验证集正确率：%s' % acc_rate)
@@ -229,7 +231,7 @@ if __name__ == '__main__':
             # tnews验证部分
             for eval_data in tnews_eval_set:
                 tnews_total += 1
-                type_id = eval_data['type_id']
+                type_id = eval_data['type_id'].to(device)
                 sentence = eval_data['sentence']
                 input_token = eval_data['input_token_ids'].unsqueeze(0).to(device)
                 segment_ids = eval_data['segment_ids'].unsqueeze(0).to(device)
@@ -249,6 +251,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == tnews_topk:
                     tnews_correct += 1
+                # break
             acc_rate = float(tnews_correct) / float(tnews_total)
             acc_rate = round(acc_rate, 2)
             print('tnews验证集正确率：%s' % acc_rate)
