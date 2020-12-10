@@ -8,7 +8,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from bert.data.classify_dataset import *
 from bert.layers.BertClassify import BertClassify
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support, classification_report, f1_score
+from sklearn.metrics import f1_score
 
 
 def get_f1(l_t, l_p):
