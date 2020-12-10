@@ -147,8 +147,17 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -168,7 +177,7 @@ class DataAnalysis(object):
             else:
                 self.classes2count[label] = 1
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.oce_test_lines:
@@ -191,14 +200,23 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             self.fw_oce.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.oce_sentences.append(sentence)
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
     def __count_ocn(self):
         # 对训练数据进行统计
@@ -223,8 +241,17 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -244,7 +271,7 @@ class DataAnalysis(object):
             else:
                 self.classes2count[label] = 1
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.ocn_test_lines:
@@ -268,14 +295,23 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             self.fw_ocn.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.ocn_sentences.append(sentence)
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
     def __count_tnews(self):
         # 对训练数据进行统计
@@ -299,8 +335,17 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -320,7 +365,7 @@ class DataAnalysis(object):
             else:
                 self.classes2count[label] = 1
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.tnews_test_lines:
@@ -343,14 +388,23 @@ class DataAnalysis(object):
                     current_words.append('*')
                 else:
                     current_words.append(word)
-            sentence = ' '.join(current_words)
-            self.words.extend(current_words)
+
+            new_current_words = []
+            for word in current_words:
+                if 'charexpress' in word:
+                    new_current_words.append(word)
+                else:
+                    for ch in word:
+                        new_current_words.append(ch)
+
+            sentence = ' '.join(new_current_words)
+            self.words.extend(new_current_words)
             self.fw_tnews.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.tnews_sentences.append(sentence)
             self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(current_words))
+            self.sens_len_by_words.append(len(new_current_words))
 
     def __gen_new_vocab(self):
         with open('data/new_vocab.txt', 'w', encoding='utf-8') as f:
