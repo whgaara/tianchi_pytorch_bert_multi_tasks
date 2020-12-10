@@ -8,14 +8,21 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 # ## 模型文件路径 ## #
 UserDict = 'data/key.txt'
 StopDict = 'data/stop.txt'
-CorpusPath = 'data/train_data/oce_train.txt'
-EvalPath = 'data/eval_data/oce_eval.txt'
-TestPath = 'data/eval_data/oce_test.csv'
+WordsVocabPath = 'data/new_words.txt'
+CharsVocabPath = 'data/new_vocab.txt'
 C2NPicklePath = 'data/classes2num.pickle'
 W2NPicklePath = 'data/words2num.pickle'
 EmojiPicklePath = 'data/emoji.pickle'
-WordsVocabPath = 'data/new_words.txt'
-CharsVocabPath = 'data/new_vocab.txt'
+
+OceTrainPath = 'data/OCEMOTION/train_data/oce_train.txt'
+OceEvalPath = 'data/OCEMOTION/eval_data/oce_eval.txt'
+OceTestPath = 'data/OCEMOTION/test_data/oce_test.txt'
+OcnTrainPath = 'data/OCNLI/train_data/ocn_train.txt'
+OcnEvalPath = 'data/OCNLI/eval_data/ocn_eval.txt'
+OcnTestPath = 'data/OCNLI/test_data/ocn_test.txt'
+TnewsTrainPath = 'data/TNEWS/train_data/tnews_train.txt'
+TnewsEvalPath = 'data/TNEWS/eval_data/tnews_eval.txt'
+TnewsTestPath = 'data/TNEWS/test_data/tnews_test.txt'
 
 # 保存最大句长，字符数，类别数
 Assistant = 'data/train_data/assistant.txt'
@@ -26,9 +33,9 @@ BatchSize = 32
 TrainRate = 0.95
 LearningRate = 5e-5
 AttentionMask = True
-HiddenLayerNum = 2
+HiddenLayerNum = 3
 SentenceLength = 128
-BalanceNum = 5000
+BalanceNum = 1000
 FinetunePath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #
 

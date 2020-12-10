@@ -39,4 +39,4 @@ class Inference(object):
 
 if __name__ == '__main__':
     bert_infer = Inference()
-    bert_infer.inference_batch('../../data/eval_data/test.txt')
+    bert_infer.inference_batch('../../data/OCNLI/test.txt')
