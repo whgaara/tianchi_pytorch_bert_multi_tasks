@@ -4,7 +4,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 import torch
 
 from tqdm import tqdm
-from pretrain_config import PretrainPath, device, SentenceLength, VocabPath
+from config import FinetunePath, device
 from bert.common.tokenizers import Tokenizer
 
 
@@ -12,7 +12,7 @@ class Inference(object):
     def __init__(self):
         self.sen_count = 0
         self.sen_acc = 0
-        self.model = torch.load(PretrainPath).to(device).eval()
+        self.model = torch.load(FinetunePath).to(device).eval()
         print('加载模型完成！')
 
     def inference_single(self, text):
