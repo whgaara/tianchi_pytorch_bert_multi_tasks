@@ -54,3 +54,17 @@ class TokenEmbedding(nn.Module):
         embedding_x = self.emb_normalization(token_embeddings)
         embedding_x = self.emb_dropout(embedding_x)
         return embedding_x
+
+
+class TypeEmbedding(nn.Module):
+    def __init__(self, type_size=3, hidden_size=HiddenSize, dropout_prob=0.1):
+        super(TypeEmbedding, self).__init__()
+        self.token_embeddings = nn.Embedding(type_size, hidden_size)
+        self.emb_normalization = nn.LayerNorm(hidden_size)
+        self.emb_dropout = nn.Dropout(p=dropout_prob)
+
+    def forward(self, type_token):
+        token_embeddings = self.token_embeddings(type_token)
+        embedding_x = self.emb_normalization(token_embeddings)
+        embedding_x = self.emb_dropout(embedding_x)
+        return embedding_x

@@ -18,38 +18,84 @@ if __name__ == '__main__':
         for x, y in classes2num.items():
             num2classes[y] = x
 
-    bert = BertClassify(kinds_num=labelcount).to(device)
+    bert = BertClassify(oce_kinds_num=7, ocn_kinds_num=3, tnews_kinds_num=15).to(device)
 
     # 使用分词训练
-    evalset = BertEvalSetByWords(EvalPath, C2NPicklePath, W2NPicklePath)
-    dataset = BertDataSetByWords(CorpusPath, C2NPicklePath, W2NPicklePath)
+    oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath, W2NPicklePath)
+    oce_train_set = BertDataSetByWords(OceTrainPath, C2NPicklePath, W2NPicklePath)
+    ocn_eval_set = BertEvalSetByWords(OcnEvalPath, C2NPicklePath, W2NPicklePath)
+    ocn_train_set = BertDataSetByWords(OcnTrainPath, C2NPicklePath, W2NPicklePath)
+    tnews_eval_set = BertEvalSetByWords(TnewsEvalPath, C2NPicklePath, W2NPicklePath)
+    tnews_train_set = BertDataSetByWords(TnewsTrainPath, C2NPicklePath, W2NPicklePath)
     # 使用分字训练
     # evalset = BertEvalSetByChars(EvalPath, CharsVocabPath, C2NPicklePath)
     # dataset = BertDataSetByChars(CorpusPath, CharsVocabPath, C2NPicklePath)
-    dataloader = DataLoader(dataset=dataset, batch_size=BatchSize, shuffle=True, drop_last=False)
+
+    oce_dataloader = DataLoader(dataset=oce_train_set, batch_size=OceBatchSize, shuffle=True, drop_last=True)
+    ocn_dataloader = DataLoader(dataset=ocn_train_set, batch_size=OcnBatchSize, shuffle=True, drop_last=True)
+    tnews_dataloader = DataLoader(dataset=tnews_train_set, batch_size=TnewsBatchSize, shuffle=True, drop_last=True)
 
     optim = Adam(bert.parameters(), lr=LearningRate)
-    criterion = nn.CrossEntropyLoss().to(device)
+    oce_criterion = nn.CrossEntropyLoss().to(device)
+    ocn_criterion = nn.CrossEntropyLoss().to(device)
+    tnews_criterion = nn.CrossEntropyLoss().to(device)
 
     for epoch in range(Epochs):
         # train
         bert.train()
-        data_iter = tqdm(enumerate(dataloader),
-                         desc='EP_%s:%d' % ('train', epoch),
-                         total=len(dataloader),
-                         bar_format='{l_bar}{r_bar}')
+        oce_data_iter = tqdm(enumerate(oce_dataloader), desc='EP_%s:%d' % ('train', epoch),
+                             total=len(oce_dataloader), bar_format='{l_bar}{r_bar}')
+        ocn_data_iter = tqdm(enumerate(ocn_dataloader), desc='EP_%s:%d' % ('train', epoch),
+                             total=len(ocn_dataloader), bar_format='{l_bar}{r_bar}')
+        tnews_data_iter = tqdm(enumerate(tnews_dataloader), desc='EP_%s:%d' % ('train', epoch),
+                               total=len(tnews_dataloader), bar_format='{l_bar}{r_bar}')
         print_loss = 0.0
-        for i, data in data_iter:
-            data = {k: v.to(device) for k, v in data.items()}
-            input_token = data['input_token_ids']
-            segment_ids = data['segment_ids']
-            label = data['token_ids_labels']
-            output = bert(input_token, segment_ids)
-            mask_loss = criterion(output, label)
+
+        for (i, oce_data), (j, ocn_data), (k, tnews_data) in zip(oce_data_iter, ocn_data_iter, tnews_data_iter):
+            oce_data = {k: v.to(device) for k, v in oce_data.items()}
+            ocn_data = {k: v.to(device) for k, v in ocn_data.items()}
+            tnews_data = {k: v.to(device) for k, v in tnews_data.items()}
+
+            oce_type_id = oce_data['type_id']
+            oce_input_token = oce_data['input_token_ids']
+            oce_segment_ids = oce_data['segment_ids']
+            oce_label = oce_data['token_ids_labels']
+
+            ocn_type_id = ocn_data['type_id']
+            ocn_input_token = ocn_data['input_token_ids']
+            ocn_segment_ids = ocn_data['segment_ids']
+            ocn_label = ocn_data['token_ids_labels']
+
+            tnews_type_id = tnews_data['type_id']
+            tnews_input_token = tnews_data['input_token_ids']
+            tnews_segment_ids = tnews_data['segment_ids']
+            tnews_label = tnews_data['token_ids_labels']
+
+            # 对数据进行叠加和拼接
+            oce_end_id = len(oce_input_token)
+            ocn_end_id = len(ocn_input_token)
+            tnews_end_id = len(tnews_input_token)
+
+            type_id = torch.cat([oce_type_id, ocn_type_id, tnews_type_id])
+            input_token = torch.cat([oce_input_token, ocn_input_token, tnews_input_token])
+            segment_ids = torch.cat([oce_segment_ids, ocn_segment_ids, tnews_segment_ids])
+
+            output = bert(
+                type_id,
+                input_token,
+                segment_ids,
+                oce_end_id,
+                ocn_end_id,
+                tnews_end_id
+            )
+
+            # 多任务损失
+            mask_loss = oce_criterion(output, label)
             print_loss = mask_loss.item()
             optim.zero_grad()
             mask_loss.backward()
             optim.step()
+
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
         # save
