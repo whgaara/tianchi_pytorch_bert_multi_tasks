@@ -20,7 +20,6 @@ def get_f1(l_t, l_p):
 if __name__ == '__main__':
     with open(C2NPicklePath, 'rb') as f:
         classes2num = pickle.load(f)
-        labelcount = len(classes2num)
         num2classes = {}
         for x, y in classes2num.items():
             num2classes[y] = x
@@ -30,6 +29,7 @@ if __name__ == '__main__':
     if os.path.exists(FinetunePath):
         print('开始加载本地预训练模型！')
         bert.load_pretrain(FinetunePath)
+        bert = bert.to(device)
         print('完成加载本地预训练模型！\n')
 
     # 使用分词训练

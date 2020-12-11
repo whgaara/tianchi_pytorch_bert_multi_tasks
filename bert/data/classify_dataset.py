@@ -36,6 +36,7 @@ class BertDataSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
         current_words = token_text.split(' ')
+        current_words = ['[CLS]'] + current_words
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
         if len(tokens_id) < SentenceLength:
             for i in range(SentenceLength - len(tokens_id)):
@@ -83,6 +84,7 @@ class BertEvalSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
         current_words = token_text.split(' ')
+        current_words = ['[CLS]'] + current_words
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
         if len(tokens_id) < SentenceLength:
             for i in range(SentenceLength - len(tokens_id)):

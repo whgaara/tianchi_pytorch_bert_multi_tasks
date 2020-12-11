@@ -82,7 +82,7 @@ class BertClassify(nn.Module):
         return torch.tensor(attention_masks)
 
     def load_pretrain(self, path=FinetunePath):
-        pretrain_model_dict = torch.load(path)
+        pretrain_model_dict = torch.load(path, map_location='cpu')
         self.load_state_dict(pretrain_model_dict.state_dict())
 
     def forward(self, type_id, input_token, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
