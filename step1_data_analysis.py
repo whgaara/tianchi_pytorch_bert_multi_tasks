@@ -4,7 +4,7 @@ import jieba
 import random
 import pickle
 
-from config import TrainRate, C2NPicklePath, W2NPicklePath, BalanceNum, UserDict, WordsVocabPath, EmojiPicklePath
+from config import TrainRate, C2NPicklePath, BalanceNum, UserDict, CharsVocabPath, EmojiPicklePath
 from config import StopDict
 from string import punctuation as str_punctuation
 from zhon.hanzi import punctuation as zhon_punctuation
@@ -53,16 +53,10 @@ class DataAnalysis(object):
         self.fw_ocn = open('data/OCNLI/test_data/ocn_test.txt', 'w', encoding='utf-8')
         self.fw_tnews = open('data/TNEWS/test_data/tnews_test.txt', 'w', encoding='utf-8')
 
-        self.v = open('data/vocab.txt', 'r', encoding='utf-8')
         self.g = open('data/assistant.txt', 'w', encoding='utf-8')
 
-        self.oce_classes = []
-        self.ocn_classes = []
-        self.tnews_classes = []
-
-        self.oce_sentences = []
-        self.ocn_sentences = []
-        self.tnews_sentences = []
+        self.f_vocab = open('data/vocab.txt', 'r', encoding='utf-8')
+        self.vocabs = [x.strip() for x in self.f_vocab.readlines()]
 
         self.oce_src_lines = []
         self.ocn_src_lines = []
@@ -72,14 +66,13 @@ class DataAnalysis(object):
         self.ocn_test_lines = []
         self.tnews_test_lines = []
 
-        self.words = []
-        self.vocabs = []
-        self.classes = []
-        self.missed_chars = []
-        self.sens_len_by_char = []
-        self.sens_len_by_words = []
+        self.oce_sentences = []
+        self.ocn_sentences = []
+        self.tnews_sentences = []
 
-        self.words2num = {'[pad]': 0, '[cls]': 1, '[unk]': 2, '[sep]': 3}
+        self.sens_len_by_char = []
+
+        self.classes = []
         self.classes2num = {}
         self.classes2count = {}
         self.classes2sentences = {}
@@ -89,19 +82,12 @@ class DataAnalysis(object):
         self.__count_ocn()
         self.__count_tnews()
 
-        self.words = sorted(list(set(self.words)))
         self.classes = sorted(list(set(self.classes)))
         self.sens_len_by_char = sorted(list(set(self.sens_len_by_char)))
-        self.sens_len_by_words = sorted(list(set(self.sens_len_by_words)))
 
         self.__balance()
 
     def __traverse(self):
-        for char in self.v:
-            if char:
-                char = char.strip()
-                self.vocabs.append(char)
-
         for line in self.fr_oce:
             if line:
                 self.oce_src_lines.append(line.strip())
@@ -151,13 +137,15 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -176,8 +164,7 @@ class DataAnalysis(object):
                 self.classes2count[label] += 1
             else:
                 self.classes2count[label] = 1
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
+            self.sens_len_by_char.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.oce_test_lines:
@@ -204,19 +191,20 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             self.fw_oce.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.oce_sentences.append(sentence)
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
+            self.sens_len_by_char.append(len(new_current_words))
 
     def __count_ocn(self):
         # 对训练数据进行统计
@@ -245,13 +233,15 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -270,8 +260,7 @@ class DataAnalysis(object):
                 self.classes2count[label] += 1
             else:
                 self.classes2count[label] = 1
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
+            self.sens_len_by_char.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.ocn_test_lines:
@@ -299,19 +288,20 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             self.fw_ocn.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.ocn_sentences.append(sentence)
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
+            self.sens_len_by_char.append(len(new_current_words))
 
     def __count_tnews(self):
         # 对训练数据进行统计
@@ -339,13 +329,15 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             ###################################################################
 
             # 记录label及其编号
@@ -364,8 +356,7 @@ class DataAnalysis(object):
                 self.classes2count[label] += 1
             else:
                 self.classes2count[label] = 1
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
+            self.sens_len_by_char.append(len(new_current_words))
 
         # 对测试数据进行统计
         for line in self.tnews_test_lines:
@@ -392,25 +383,20 @@ class DataAnalysis(object):
             new_current_words = []
             for word in current_words:
                 if 'charexpress' in word:
+                    self.vocabs.append(word)
                     new_current_words.append(word)
                 else:
                     for ch in word:
                         new_current_words.append(ch)
+                        if ch not in self.vocabs:
+                            self.vocabs.append(ch)
 
             sentence = ' '.join(new_current_words)
-            self.words.extend(new_current_words)
             self.fw_tnews.write(num + '\t' + sentence + '\n')
             ###################################################################
 
             self.tnews_sentences.append(sentence)
-            self.sens_len_by_char.append(len(sentence))
-            self.sens_len_by_words.append(len(new_current_words))
-
-    def __gen_new_vocab(self):
-        with open('data/new_vocab.txt', 'w', encoding='utf-8') as f:
-            for s_char in self.vocabs + self.missed_chars:
-                if s_char:
-                    f.write(s_char + '\n')
+            self.sens_len_by_char.append(len(new_current_words))
 
     def __balance(self):
         for label in self.classes2sentences:
@@ -425,33 +411,18 @@ class DataAnalysis(object):
                     tmp_list = tmp_list + self.classes2sentences[label][:100]
             self.classes2sentences[label] = tmp_list
 
-    def check_char(self):
-        for sentence in self.oce_sentences + self.ocn_sentences + self.tnews_sentences:
-            for s_char in sentence:
-                if s_char in self.vocabs:
-                    continue
-                else:
-                    if s_char not in self.missed_chars:
-                        self.missed_chars.append(s_char)
-        self.__gen_new_vocab()
-
-    def check_words(self):
-        with open(WordsVocabPath, 'w', encoding='utf-8') as f:
-            for word in self.words:
-                if word:
-                    self.words2num[word] = len(self.words2num)
-                    f.write(word + '\n')
-        with open(W2NPicklePath, 'wb') as f:
-            pickle.dump(self.words2num, f)
+    def gen_new_vocab(self):
+        with open(CharsVocabPath, 'w', encoding='utf-8') as f:
+            for char in self.vocabs:
+                if char:
+                    f.write(char + '\n')
 
     def print_info(self):
         self.g.write('OCE共有数据总数：%s\n' % len(self.oce_sentences))
         self.g.write('OCN共有数据总数：%s\n' % len(self.ocn_sentences))
         self.g.write('Tnews共有数据总数：%s\n\n' % len(self.tnews_sentences))
-        self.g.write('最短单字文本长度：%s\n' % self.sens_len_by_char[0])
-        self.g.write('最长单字文本长度：%s\n' % self.sens_len_by_char[-1])
-        self.g.write('最短单词文本长度：%s\n' % self.sens_len_by_words[0])
-        self.g.write('最长单词文本长度：%s\n' % self.sens_len_by_words[-1])
+        self.g.write('最短文本长度：%s\n' % self.sens_len_by_char[0])
+        self.g.write('最长文本长度：%s\n' % self.sens_len_by_char[-1])
         self.g.write('共有类别总数：%s\n' % len(self.classes))
         self.g.write('类别数据分部：%s\n' % json.dumps(self.classes2count))
         with open(C2NPicklePath, 'wb') as f:
@@ -502,6 +473,5 @@ class DataAnalysis(object):
 if __name__ == '__main__':
     da = DataAnalysis()
     da.print_info()
-    # da.check_char()
-    da.check_words()
+    da.gen_new_vocab()
     da.gen_train_eval()
