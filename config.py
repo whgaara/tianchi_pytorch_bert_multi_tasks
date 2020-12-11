@@ -42,7 +42,6 @@ TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
 OceBatchSize = OceTrainCount // NormalSteps
 OcnBatchSize = OcnTrainCount // NormalSteps
 TnewsBatchSize = TnewsTrainCount // NormalSteps
-LocalPretrainPath = 'checkpoint/finetune/bert_classify.model'
 FinetunePath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #
 
