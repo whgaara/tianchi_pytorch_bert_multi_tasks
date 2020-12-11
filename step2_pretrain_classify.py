@@ -27,6 +27,11 @@ if __name__ == '__main__':
 
     bert = BertClassify(oce_kinds_num=7, ocn_kinds_num=3, tnews_kinds_num=15).to(device)
 
+    if os.path.exists(LocalPretrainPath):
+        print('开始加载本地预训练模型！')
+        bert.load_pretrain(LocalPretrainPath)
+        print('完成加载本地预训练模型！\n')
+
     # 使用分词训练
     oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath)
     oce_train_set = BertDataSetByWords(OceTrainPath, C2NPicklePath)

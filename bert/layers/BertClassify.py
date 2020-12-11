@@ -81,6 +81,10 @@ class BertClassify(nn.Module):
             attention_masks.append(attention_mask.tolist())
         return torch.tensor(attention_masks)
 
+    def load_pretrain(self, path=LocalPretrainPath):
+        pretrain_model_dict = torch.load(path)
+        self.load_state_dict(pretrain_model_dict.state_dict())
+
     def forward(self, type_id, input_token, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
         embedding_x = self.type_emb(type_id) + self.token_emb(input_token) + self.position_emb()
