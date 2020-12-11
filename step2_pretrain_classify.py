@@ -63,7 +63,7 @@ if __name__ == '__main__':
         print_loss = 0.0
 
         for (i, oce_data), (j, ocn_data), (k, tnews_data) in zip(oce_data_iter, ocn_data_iter, tnews_data_iter):
-            if i == min(len(oce_data_iter), len(ocn_data_iter), len(tnews_data_iter)) - 1:
+            if i == min(len(oce_data_iter), len(ocn_data_iter), len(tnews_data_iter)):
                 break
 
             oce_data = {k: v.to(device) for k, v in oce_data.items()}
