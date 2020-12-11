@@ -81,7 +81,7 @@ class BertClassify(nn.Module):
             attention_masks.append(attention_mask.tolist())
         return torch.tensor(attention_masks)
 
-    def load_pretrain(self, path=LocalPretrainPath):
+    def load_pretrain(self, path=FinetunePath):
         pretrain_model_dict = torch.load(path)
         self.load_state_dict(pretrain_model_dict.state_dict())
 
