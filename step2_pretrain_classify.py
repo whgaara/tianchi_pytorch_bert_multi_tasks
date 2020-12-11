@@ -112,8 +112,8 @@ if __name__ == '__main__':
             total_loss.backward()
             print_loss = total_loss.item()
 
-            optim.zero_grad()
             optim.step()
+            optim.zero_grad()
 
             # 统计训练结果
             oce_label = oce_label.tolist()
