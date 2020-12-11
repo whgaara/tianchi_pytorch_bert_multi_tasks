@@ -34,16 +34,6 @@ class BertDataSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
         current_words = token_text.split(' ')
-
-        # tokens_id = []
-        # for word in current_words:
-        #     tokens_id.append(self.words2num.get(word, self.words2num['[unk]']))
-        # if len(tokens_id) < SentenceLength:
-        #     for i in range(SentenceLength - len(tokens_id)):
-        #         tokens_id.append(self.words2num['[pad]'])
-        # else:
-        #     tokens_id = tokens_id[:SentenceLength]
-
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
         if len(tokens_id) < SentenceLength:
             for i in range(SentenceLength - len(tokens_id)):
@@ -91,16 +81,6 @@ class BertEvalSetByWords(Dataset):
         label_text = self.labels[item]
         token_text = self.descriptions[item]
         current_words = token_text.split(' ')
-
-        # tokens_id = []
-        # for word in current_words:
-        #     tokens_id.append(self.words2num.get(word, self.words2num['[unk]']))
-        # if len(tokens_id) < SentenceLength:
-        #     for i in range(SentenceLength - len(tokens_id)):
-        #         tokens_id.append(self.words2num['[pad]'])
-        # else:
-        #     tokens_id = tokens_id[:SentenceLength]
-
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
         if len(tokens_id) < SentenceLength:
             for i in range(SentenceLength - len(tokens_id)):
@@ -124,9 +104,3 @@ if __name__ == '__main__':
 
     for data in tt:
         x = 1
-
-    # x = 1
-    # import jieba
-    # jieba.load_userdict('../../data/key.txt')
-    # xxx = jieba.lcut('expression1orz(╯□╰)happinessislikeapebble1droppedintoapooltosetinmotionanever-wideningcircleofripples2.asstevensonhassaid,"beinghappyisaduty."快乐好似掷入池塘里的一枚鹅卵石,会激起不断扩散的一圈圈涟漪。斯蒂文生曾说过:“快乐是一种责任。”[求关注]')
-    # print(xxx)
