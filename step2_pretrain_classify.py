@@ -111,9 +111,9 @@ if __name__ == '__main__':
             )
 
             # 多任务损失
-            oce_loss = oce_criterion(oce_output, oce_label)
-            ocn_loss = ocn_criterion(ocn_output, ocn_label) * 2
-            tnews_loss = tnews_criterion(tnews_output, tnews_label)
+            oce_loss = oce_criterion(oce_output, oce_label) * 1.2
+            ocn_loss = ocn_criterion(ocn_output, ocn_label) * 2.8
+            tnews_loss = tnews_criterion(tnews_output, tnews_label) * 0.55
             total_loss = oce_loss + ocn_loss + tnews_loss
             total_loss.backward()
             print_loss = total_loss.item()
