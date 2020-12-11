@@ -1,6 +1,5 @@
 import time
 import torch
-import pickle
 
 cuda_condition = torch.cuda.is_available()
 device = torch.device('cuda:0' if cuda_condition else 'cpu')
@@ -31,12 +30,12 @@ Epochs = 32
 TrainRate = 0.95
 LearningRate = 5e-5
 AttentionMask = True
-HiddenLayerNum = 12
+HiddenLayerNum = 6
 SentenceLength = 128
 BalanceNum = 5000
 
 # 计算BatchSize
-NormalSteps = 3000
+NormalSteps = 2000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
