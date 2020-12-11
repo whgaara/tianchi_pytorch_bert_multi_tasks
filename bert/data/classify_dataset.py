@@ -4,7 +4,7 @@ from bert.common.tokenizers import Tokenizer
 
 
 class BertDataSetByWords(Dataset):
-    def __init__(self, corpus_path, c2n_pickle_path, w2n_pickle_path):
+    def __init__(self, corpus_path, c2n_pickle_path):
         self.labels = []
         self.corpus_path = corpus_path
         self.descriptions = []
@@ -17,8 +17,6 @@ class BertDataSetByWords(Dataset):
         self.tokenizer = Tokenizer(CharsVocabPath)
         with open(c2n_pickle_path, 'rb') as f:
             self.classes2num = pickle.load(f)
-        with open(w2n_pickle_path, 'rb') as f:
-            self.words2num = pickle.load(f)
         with open(self.corpus_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line:
@@ -63,7 +61,7 @@ class BertDataSetByWords(Dataset):
 
 
 class BertEvalSetByWords(Dataset):
-    def __init__(self, eval_path, c2n_pickle_path, w2n_pickle_path):
+    def __init__(self, eval_path, c2n_pickle_path):
         self.labels = []
         self.corpus_path = eval_path
         self.descriptions = []
@@ -76,8 +74,6 @@ class BertEvalSetByWords(Dataset):
         self.tokenizer = Tokenizer(CharsVocabPath)
         with open(c2n_pickle_path, 'rb') as f:
             self.classes2num = pickle.load(f)
-        with open(w2n_pickle_path, 'rb') as f:
-            self.words2num = pickle.load(f)
         with open(self.corpus_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line:
@@ -123,8 +119,8 @@ class BertEvalSetByWords(Dataset):
 
 
 if __name__ == '__main__':
-    tt = BertDataSetByWords('../../'+OceEvalPath, '../../'+C2NPicklePath, '../../'+W2NPicklePath)
-    yy = BertDataSetByWords('../../'+OceEvalPath, '../../'+C2NPicklePath, '../../'+W2NPicklePath)
+    tt = BertDataSetByWords('../../'+OceEvalPath, '../../'+C2NPicklePath)
+    yy = BertDataSetByWords('../../'+OceEvalPath, '../../'+C2NPicklePath)
 
     for data in tt:
         x = 1

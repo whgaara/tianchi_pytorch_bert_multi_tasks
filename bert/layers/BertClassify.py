@@ -99,13 +99,13 @@ class BertClassify(nn.Module):
 
         # classify
         # 统一优化
-        transformer_output = self.transformer_layer(feedforward_x)
-        transformer_output = self.transformer_act(transformer_output)
-        transformer_output = self.dropout0(transformer_output)
-        transformer_output = self.layer_norm0(transformer_output)
+        # transformer_output = self.transformer_layer(feedforward_x)
+        # transformer_output = self.transformer_act(transformer_output)
+        # transformer_output = self.dropout0(transformer_output)
+        # transformer_output = self.layer_norm0(transformer_output)
 
         if oce_end_id > 0:
-            transformer_oce = transformer_output[:oce_end_id, 0, :]
+            transformer_oce = feedforward_x[:oce_end_id, 0, :]
             transformer_oce = self.oce_layer1(transformer_oce)
             transformer_oce = self.dropout1(transformer_oce)
             transformer_oce = self.layer_norm1(transformer_oce)
@@ -113,7 +113,7 @@ class BertClassify(nn.Module):
         else:
             oce_output = None
         if ocn_end_id > 0:
-            transformer_ocn = transformer_output[oce_end_id:oce_end_id+ocn_end_id, 0, :]
+            transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
             transformer_ocn = self.ocn_layer1(transformer_ocn)
             transformer_ocn = self.dropout1(transformer_ocn)
             transformer_ocn = self.layer_norm1(transformer_ocn)
@@ -121,7 +121,7 @@ class BertClassify(nn.Module):
         else:
             ocn_output = None
         if tnews_end_id > 0:
-            transformer_tnews = transformer_output[oce_end_id+ocn_end_id:oce_end_id+ocn_end_id+tnews_end_id, 0, :]
+            transformer_tnews = feedforward_x[oce_end_id+ocn_end_id:oce_end_id+ocn_end_id+tnews_end_id, 0, :]
             transformer_tnews = self.tnews_layer1(transformer_tnews)
             transformer_tnews = self.dropout1(transformer_tnews)
             transformer_tnews = self.layer_norm1(transformer_tnews)

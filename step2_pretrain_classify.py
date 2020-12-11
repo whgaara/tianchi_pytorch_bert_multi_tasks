@@ -27,15 +27,12 @@ if __name__ == '__main__':
     bert = BertClassify(oce_kinds_num=7, ocn_kinds_num=3, tnews_kinds_num=15).to(device)
 
     # 使用分词训练
-    oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath, W2NPicklePath)
-    oce_train_set = BertDataSetByWords(OceTrainPath, C2NPicklePath, W2NPicklePath)
-    ocn_eval_set = BertEvalSetByWords(OcnEvalPath, C2NPicklePath, W2NPicklePath)
-    ocn_train_set = BertDataSetByWords(OcnTrainPath, C2NPicklePath, W2NPicklePath)
-    tnews_eval_set = BertEvalSetByWords(TnewsEvalPath, C2NPicklePath, W2NPicklePath)
-    tnews_train_set = BertDataSetByWords(TnewsTrainPath, C2NPicklePath, W2NPicklePath)
-    # 使用分字训练
-    # evalset = BertEvalSetByChars(EvalPath, CharsVocabPath, C2NPicklePath)
-    # dataset = BertDataSetByChars(CorpusPath, CharsVocabPath, C2NPicklePath)
+    oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath)
+    oce_train_set = BertDataSetByWords(OceTrainPath, C2NPicklePath)
+    ocn_eval_set = BertEvalSetByWords(OcnEvalPath, C2NPicklePath)
+    ocn_train_set = BertDataSetByWords(OcnTrainPath, C2NPicklePath)
+    tnews_eval_set = BertEvalSetByWords(TnewsEvalPath, C2NPicklePath)
+    tnews_train_set = BertDataSetByWords(TnewsTrainPath, C2NPicklePath)
 
     oce_dataloader = DataLoader(dataset=oce_train_set, batch_size=OceBatchSize, shuffle=True, drop_last=True)
     ocn_dataloader = DataLoader(dataset=ocn_train_set, batch_size=OcnBatchSize, shuffle=True, drop_last=True)

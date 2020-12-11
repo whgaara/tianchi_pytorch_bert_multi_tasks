@@ -32,30 +32,24 @@ TrainRate = 0.95
 LearningRate = 5e-5
 AttentionMask = True
 HiddenLayerNum = 12
-SentenceLength = 256
+SentenceLength = 128
 BalanceNum = 5000
 
 # 计算BatchSize
-NormalSteps = 2000
+NormalSteps = 3000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
-OceBatchSize = OceTrainCount // 2000
-OcnBatchSize = OcnTrainCount // 2000
-TnewsBatchSize = TnewsTrainCount // 2000
+OceBatchSize = OceTrainCount // NormalSteps
+OcnBatchSize = OcnTrainCount // NormalSteps
+TnewsBatchSize = TnewsTrainCount // NormalSteps
 FinetunePath = 'checkpoint/finetune/bert_classify_%s.model' % SentenceLength
 # ## 训练调试参数结束 ## #
 
 # ## 通用参数 ## #
 DropOut = 0.1
 try:
-    # 使用分词训练
-    with open(W2NPicklePath, 'rb') as f:
-        words2num = pickle.load(f)
-        VocabSize = len(words2num)
-
-    # 使用分字训练
-    # VocabSize = len(open(CharsVocabPath, 'r', encoding='utf-8').readlines())
+    VocabSize = len(open(CharsVocabPath, 'r', encoding='utf-8').readlines())
 except:
     VocabSize = 0
 HiddenSize = 768
