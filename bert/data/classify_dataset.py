@@ -46,9 +46,9 @@ class BertDataSetByWords(Dataset):
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['type_id'] = [self.type_id]
-        if self.type_id == 1:
-            separator = current_words.index('|')
-            output['separator'] = [separator]
+        # if self.type_id == 1:
+        #     separator = current_words.index('|')
+        #     output['separator'] = [separator]
         output['input_token_ids'] = tokens_id
         output['segment_ids'] = segment_ids
         output['token_ids_labels'] = label_text
@@ -97,9 +97,9 @@ class BertEvalSetByWords(Dataset):
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['type_id'] = torch.tensor([self.type_id], dtype=torch.long)
-        if self.type_id == 1:
-            separator = current_words.index('|')
-            output['separator'] = torch.tensor([separator], dtype=torch.long)
+        # if self.type_id == 1:
+        #     separator = current_words.index('|')
+        #     output['separator'] = torch.tensor([separator], dtype=torch.long)
         output['sentence'] = token_text
         output['cut_words'] = current_words
         output['input_token_ids'] = torch.tensor(tokens_id, dtype=torch.long)
