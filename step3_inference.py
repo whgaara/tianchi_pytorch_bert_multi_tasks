@@ -19,7 +19,7 @@ class Inference(object):
         self.fw_oce = open('submit/ocemotion_predict.json', 'w', encoding='utf-8')
         self.fw_ocn = open('submit/ocnli_predict.json', 'w', encoding='utf-8')
         self.fw_tnews = open('submit/tnews_predict.json', 'w', encoding='utf-8')
-        self.model = torch.load(FinetunePath, map_location='cpu').to(device).eval()
+        self.model = torch.load(FinetunePath).to(device).eval()
         print('加载模型完成！')
 
         self.tokenizer = Tokenizer(CharsVocabPath)
