@@ -30,12 +30,12 @@ Epochs = 32
 TrainRate = 0.95
 LearningRate = 1e-4
 AttentionMask = False
-HiddenLayerNum = 6
+HiddenLayerNum = 12
 SentenceLength = 256
 BalanceNum = 5000
 
 # 计算BatchSize
-NormalSteps = 4000
+NormalSteps = 10000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
