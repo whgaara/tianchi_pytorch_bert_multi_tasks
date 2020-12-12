@@ -138,9 +138,15 @@ if __name__ == '__main__':
             oce_output = torch.nn.Softmax(dim=-1)(oce_output)
             ocn_output = torch.nn.Softmax(dim=-1)(ocn_output)
             tnews_output = torch.nn.Softmax(dim=-1)(tnews_output)
-            oce_topk = [x[0] for x in torch.topk(oce_output, 1).indices.squeeze(0).tolist()]
-            ocn_topk = [x[0] for x in torch.topk(ocn_output, 1).indices.squeeze(0).tolist()]
-            tnews_topk = [x[0] for x in torch.topk(tnews_output, 1).indices.squeeze(0).tolist()]
+            oce_topk = torch.topk(oce_output, 1).indices.squeeze(0).tolist()
+            ocn_topk = torch.topk(ocn_output, 1).indices.squeeze(0).tolist()
+            tnews_topk = torch.topk(tnews_output, 1).indices.squeeze(0).tolist()
+            if isinstance(oce_topk[0], list):
+                oce_topk = [x[0] for x in oce_topk]
+            if isinstance(ocn_topk[0], list):
+                ocn_topk = [x[0] for x in ocn_topk]
+            if isinstance(tnews_topk[0], list):
+                tnews_topk = [x[0] for x in tnews_topk]
 
             oce_pred_list += oce_topk
             oce_label_list += oce_label
