@@ -44,9 +44,9 @@ if __name__ == '__main__':
     tnews_eval_set = BertEvalSetByWords(TnewsEvalPath, C2NPicklePath)
     tnews_train_set = BertDataSetByWords(TnewsTrainPath, C2NPicklePath)
 
-    oce_dataloader = DataLoader(dataset=oce_train_set, batch_size=OceBatchSize, shuffle=True, drop_last=True)
-    ocn_dataloader = DataLoader(dataset=ocn_train_set, batch_size=OcnBatchSize, shuffle=True, drop_last=True)
-    tnews_dataloader = DataLoader(dataset=tnews_train_set, batch_size=TnewsBatchSize, shuffle=True, drop_last=True)
+    oce_dataloader = DataLoader(dataset=oce_train_set, batch_size=OceBatchSize, shuffle=True, drop_last=False)
+    ocn_dataloader = DataLoader(dataset=ocn_train_set, batch_size=OcnBatchSize, shuffle=True, drop_last=False)
+    tnews_dataloader = DataLoader(dataset=tnews_train_set, batch_size=TnewsBatchSize, shuffle=True, drop_last=False)
 
     optim = Adam(bert.parameters(), lr=LearningRate)
     oce_criterion = nn.CrossEntropyLoss().to(device)

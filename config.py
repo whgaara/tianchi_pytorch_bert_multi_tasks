@@ -28,9 +28,9 @@ Assistant = 'data/train_data/assistant.txt'
 # ## 训练调试参数开始 ## #
 Epochs = 32
 TrainRate = 0.95
-LearningRate = 1e-3
+LearningRate = 1e-4
 AttentionMask = False
-HiddenLayerNum = 6
+HiddenLayerNum = 3
 SentenceLength = 128
 BalanceNum = 5000
 

@@ -50,7 +50,7 @@ class BertClassify(nn.Module):
         self.tnews_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.dropout1 = nn.Dropout(0.1)
         self.layer_norm1 = nn.LayerNorm(self.hidden_size)
-        self.softmax_d1 = nn.Softmax(dim=1)
+        self.softmax_d1 = nn.Softmax(dim=-1)
         self.gelu = GELU()
 
         self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
@@ -121,10 +121,12 @@ class BertClassify(nn.Module):
         # classify
         if oce_end_id > 0:
             transformer_oce = feedforward_x[:oce_end_id, 0, :]
-            transformer_oce = self.gelu(self.oce_layer1(transformer_oce))
-            transformer_oce = self.dropout1(transformer_oce)
-            transformer_oce = self.layer_norm1(transformer_oce)
-            oce_attention = self.dropout2(self.softmax_d1(self.oce_layer2(transformer_oce)).unsqueeze(1))
+            # transformer_oce = self.oce_layer1(transformer_oce)
+            # transformer_oce = self.gelu(transformer_oce)
+            # transformer_oce = self.dropout1(transformer_oce)
+            # transformer_oce = self.layer_norm1(transformer_oce)
+            oce_attention = self.oce_layer2(transformer_oce)
+            oce_attention = self.dropout2(self.softmax_d1(oce_attention).unsqueeze(1))
             oce_attention = self.layer_norm2(oce_attention)
             oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
             oce_output = torch.matmul(oce_attention, oce_value).squeeze(1)
