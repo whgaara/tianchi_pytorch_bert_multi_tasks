@@ -95,7 +95,7 @@ class Inference(object):
                 )
                 ocn_output = torch.nn.Softmax(dim=-1)(ocn_output)
                 ocn_topk = torch.topk(ocn_output, 1).indices.squeeze(0).tolist()[0]
-                current_label = self.num2classes[ocn_topk]
+                current_label = self.num2classes[ocn_topk + 7]
                 submit = {"id": str(num), "label": str(current_label)}
                 self.fw_ocn.write(json.dumps(submit) + '\n')
 
@@ -126,7 +126,7 @@ class Inference(object):
                 )
                 tnews_output = torch.nn.Softmax(dim=-1)(tnews_output)
                 tnews_topk = torch.topk(tnews_output, 1).indices.squeeze(0).tolist()[0]
-                current_label = self.num2classes[tnews_topk]
+                current_label = self.num2classes[tnews_topk + 10]
                 submit = {"id": str(num), "label": str(current_label)}
                 self.fw_tnews.write(json.dumps(submit) + '\n')
 
