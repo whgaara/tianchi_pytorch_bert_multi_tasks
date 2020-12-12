@@ -277,3 +277,4 @@ if __name__ == '__main__':
             print(epoch, 'ocn f1 is:', ocn_f1)
             print(epoch, 'tnews f1 is:', tnews_f1)
             print(epoch, 'average f1 is:', avg_f1)
+            print('\n')
