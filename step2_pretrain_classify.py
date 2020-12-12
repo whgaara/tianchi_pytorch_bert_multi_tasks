@@ -81,6 +81,7 @@ if __name__ == '__main__':
             oce_label = oce_data['token_ids_labels']
 
             ocn_type_id = ocn_data['type_id']
+            # ocn_separator = ocn_data['separator']
             ocn_input_token = ocn_data['input_token_ids']
             ocn_segment_ids = ocn_data['segment_ids']
             # -7为后续求损失做准备

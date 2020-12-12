@@ -31,6 +31,7 @@ class BertClassify(nn.Module):
         self.dropout_prob = dropout_prob
         self.attention_head_size = hidden // attention_heads
         self.intermediate_size = intermediate_size
+        self.batch_size = OceBatchSize + OcnBatchSize + TnewsBatchSize
 
         # 申明网络
         self.type_emb = TypeEmbedding()
@@ -44,20 +45,22 @@ class BertClassify(nn.Module):
                 intermediate_size=self.intermediate_size).to(device)
             for _ in range(self.num_hidden_layers)
         )
-        self.transformer_layer = nn.Linear(self.hidden_size, self.hidden_size)
-        self.transformer_act = GELU()
-        self.dropout0 = nn.Dropout(0.1)
-        self.layer_norm0 = nn.LayerNorm(self.hidden_size)
-
         self.oce_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.ocn_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.tnews_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.dropout1 = nn.Dropout(0.1)
         self.layer_norm1 = nn.LayerNorm(self.hidden_size)
+        self.softmax_d1 = nn.Softmax(dim=1)
 
-        self.oce_layer2 = nn.Linear(self.hidden_size, 7)
-        self.ocn_layer2 = nn.Linear(self.hidden_size, 3)
-        self.tnews_layer2 = nn.Linear(self.hidden_size, 15)
+        self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        self.ocn_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        self.tnews_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        self.dropout2 = nn.Dropout(0.1)
+        self.layer_norm2 = nn.LayerNorm(self.batch_size)
+
+        self.oce_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 7)
+        self.ocn_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 3)
+        self.tnews_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 15)
 
     @staticmethod
     def gen_attention_masks(segment_ids):
@@ -102,34 +105,37 @@ class BertClassify(nn.Module):
                 feedforward_x = self.transformer_blocks[i](feedforward_x, attention_mask)
 
         # classify
-        # 统一优化
-        # transformer_output = self.transformer_layer(feedforward_x)
-        # transformer_output = self.transformer_act(transformer_output)
-        # transformer_output = self.dropout0(transformer_output)
-        # transformer_output = self.layer_norm0(transformer_output)
-
         if oce_end_id > 0:
             transformer_oce = feedforward_x[:oce_end_id, 0, :]
             transformer_oce = self.oce_layer1(transformer_oce)
             transformer_oce = self.dropout1(transformer_oce)
             transformer_oce = self.layer_norm1(transformer_oce)
-            oce_output = self.oce_layer2(transformer_oce)
+            oce_attention = self.dropout2(self.softmax_d1(self.oce_layer2(transformer_oce)).unsqueeze(1))
+            oce_attention = self.layer_norm2(oce_attention)
+            oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
+            oce_output = torch.matmul(oce_attention, oce_value).squeeze(1)
         else:
             oce_output = None
         if ocn_end_id > 0:
-            transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
+            transformer_ocn = feedforward_x[:ocn_end_id, 0, :]
             transformer_ocn = self.ocn_layer1(transformer_ocn)
             transformer_ocn = self.dropout1(transformer_ocn)
             transformer_ocn = self.layer_norm1(transformer_ocn)
-            ocn_output = self.ocn_layer2(transformer_ocn)
+            ocn_attention = self.dropout2(self.softmax_d1(self.ocn_layer2(transformer_ocn)).unsqueeze(1))
+            ocn_attention = self.layer_norm2(ocn_attention)
+            ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
+            ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
         else:
             ocn_output = None
         if tnews_end_id > 0:
-            transformer_tnews = feedforward_x[oce_end_id+ocn_end_id:oce_end_id+ocn_end_id+tnews_end_id, 0, :]
+            transformer_tnews = feedforward_x[:tnews_end_id, 0, :]
             transformer_tnews = self.tnews_layer1(transformer_tnews)
             transformer_tnews = self.dropout1(transformer_tnews)
             transformer_tnews = self.layer_norm1(transformer_tnews)
-            tnews_output = self.tnews_layer2(transformer_tnews)
+            tnews_attention = self.dropout2(self.softmax_d1(self.tnews_layer2(transformer_tnews)).unsqueeze(1))
+            tnews_attention = self.layer_norm2(tnews_attention)
+            tnews_value = self.tnews_layer3(transformer_tnews).contiguous().view(-1, self.batch_size, 15)
+            tnews_output = torch.matmul(tnews_attention, tnews_value).squeeze(1)
         else:
             tnews_output = None
 
