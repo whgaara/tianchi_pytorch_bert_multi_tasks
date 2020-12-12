@@ -3,7 +3,7 @@ import torch.nn as nn
 from config import *
 from bert.layers.Gelu import GELU
 from bert.layers.Transformer import Transformer
-from bert.layers.BertEmbeddings import TokenEmbedding, PositionEmbedding, BertEmbeddings, TypeEmbedding
+from bert.layers.BertEmbeddings import TokenEmbedding, PositionEmbedding, TypeEmbedding
 
 
 class BertClassify(nn.Module):
@@ -51,6 +51,7 @@ class BertClassify(nn.Module):
         self.dropout1 = nn.Dropout(0.1)
         self.layer_norm1 = nn.LayerNorm(self.hidden_size)
         self.softmax_d1 = nn.Softmax(dim=1)
+        self.gelu = GELU()
 
         self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
         self.ocn_layer2 = nn.Linear(self.hidden_size, self.batch_size)
@@ -107,7 +108,7 @@ class BertClassify(nn.Module):
         # classify
         if oce_end_id > 0:
             transformer_oce = feedforward_x[:oce_end_id, 0, :]
-            transformer_oce = self.oce_layer1(transformer_oce)
+            transformer_oce = self.gelu(self.oce_layer1(transformer_oce))
             transformer_oce = self.dropout1(transformer_oce)
             transformer_oce = self.layer_norm1(transformer_oce)
             oce_attention = self.dropout2(self.softmax_d1(self.oce_layer2(transformer_oce)).unsqueeze(1))
@@ -118,7 +119,7 @@ class BertClassify(nn.Module):
             oce_output = None
         if ocn_end_id > 0:
             transformer_ocn = feedforward_x[:ocn_end_id, 0, :]
-            transformer_ocn = self.ocn_layer1(transformer_ocn)
+            transformer_ocn = self.gelu(self.ocn_layer1(transformer_ocn))
             transformer_ocn = self.dropout1(transformer_ocn)
             transformer_ocn = self.layer_norm1(transformer_ocn)
             ocn_attention = self.dropout2(self.softmax_d1(self.ocn_layer2(transformer_ocn)).unsqueeze(1))
@@ -129,7 +130,7 @@ class BertClassify(nn.Module):
             ocn_output = None
         if tnews_end_id > 0:
             transformer_tnews = feedforward_x[:tnews_end_id, 0, :]
-            transformer_tnews = self.tnews_layer1(transformer_tnews)
+            transformer_tnews = self.gelu(self.tnews_layer1(transformer_tnews))
             transformer_tnews = self.dropout1(transformer_tnews)
             transformer_tnews = self.layer_norm1(transformer_tnews)
             tnews_attention = self.dropout2(self.softmax_d1(self.tnews_layer2(transformer_tnews)).unsqueeze(1))
