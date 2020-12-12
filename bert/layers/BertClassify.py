@@ -131,7 +131,7 @@ class BertClassify(nn.Module):
         else:
             oce_output = None
         if ocn_end_id > 0:
-            transformer_ocn = feedforward_x[:ocn_end_id, 0, :]
+            transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
             transformer_ocn = self.gelu(self.ocn_layer1(transformer_ocn))
             transformer_ocn = self.dropout1(transformer_ocn)
             transformer_ocn = self.layer_norm1(transformer_ocn)
@@ -142,7 +142,7 @@ class BertClassify(nn.Module):
         else:
             ocn_output = None
         if tnews_end_id > 0:
-            transformer_tnews = feedforward_x[:tnews_end_id, 0, :]
+            transformer_tnews = feedforward_x[oce_end_id+ocn_end_id:oce_end_id+ocn_end_id+tnews_end_id, 0, :]
             transformer_tnews = self.gelu(self.tnews_layer1(transformer_tnews))
             transformer_tnews = self.dropout1(transformer_tnews)
             transformer_tnews = self.layer_norm1(transformer_tnews)
