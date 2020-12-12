@@ -26,15 +26,15 @@ if __name__ == '__main__':
 
     bert = BertClassify(oce_kinds_num=7, ocn_kinds_num=3, tnews_kinds_num=15).to(device)
 
-    # if os.path.exists(FinetunePath):
-    #     print('开始加载本地预训练模型！')
-    #     bert.load_finetune(FinetunePath)
-    #     bert = bert.to(device)
-    #     print('完成加载本地预训练模型！\n')
-    # else:
-    #     print('开始加载外部预训练模型！')
-    #     bert.load_pretrain(PretrainPath)
-    #     print('完成加载外部预训练模型！')
+    if os.path.exists(FinetunePath):
+        print('开始加载本地预训练模型！')
+        bert.load_finetune(FinetunePath)
+        bert = bert.to(device)
+        print('完成加载本地预训练模型！\n')
+    else:
+        print('开始加载外部预训练模型！')
+        bert.load_pretrain(PretrainPath)
+        print('完成加载外部预训练模型！')
 
     # 使用分词训练
     oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath)
