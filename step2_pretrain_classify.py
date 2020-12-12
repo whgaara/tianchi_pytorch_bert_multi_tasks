@@ -28,9 +28,13 @@ if __name__ == '__main__':
 
     if os.path.exists(FinetunePath):
         print('开始加载本地预训练模型！')
-        bert.load_pretrain(FinetunePath)
+        bert.load_finetune(FinetunePath)
         bert = bert.to(device)
         print('完成加载本地预训练模型！\n')
+    else:
+        print('开始加载外部预训练模型！')
+        bert.load_pretrain(PretrainPath)
+        print('完成加载外部预训练模型！')
 
     # 使用分词训练
     oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath)

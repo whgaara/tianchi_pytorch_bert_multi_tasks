@@ -85,9 +85,22 @@ class BertClassify(nn.Module):
             attention_masks.append(attention_mask.tolist())
         return torch.tensor(attention_masks)
 
-    def load_pretrain(self, path=FinetunePath):
+    def load_finetune(self, path=FinetunePath):
         pretrain_model_dict = torch.load(path, map_location='cpu')
         self.load_state_dict(pretrain_model_dict.state_dict())
+
+    def load_pretrain(self, path):
+        pretrain_model_dict = torch.load(path)
+        finetune_model_dict = self.state_dict()
+        new_parameter_dict = {}
+        # 加载transformerblock层参数
+        for i in range(self.num_hidden_layers):
+            for key in local2target_transformer:
+                local = key % i
+                target = local2target_transformer[key] % i
+                new_parameter_dict[local] = pretrain_model_dict[target]
+        finetune_model_dict.update(new_parameter_dict)
+        self.load_state_dict(finetune_model_dict)
 
     def forward(self, type_id, input_token, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
