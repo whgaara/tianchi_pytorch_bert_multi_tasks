@@ -7,23 +7,17 @@ from config import device, HiddenSize, SentenceLength, VocabSize
 class BertEmbeddings(nn.Module):
     def __init__(self, vocab_size=VocabSize, max_len=SentenceLength, hidden_size=HiddenSize, dropout_prob=0.1):
         super(BertEmbeddings, self).__init__()
-        self.max_len = max_len
+        self.type_embeddings = nn.Embedding(3, hidden_size)
         self.token_embeddings = nn.Embedding(vocab_size, hidden_size)
-        self.position_embeddings = nn.Embedding(self.max_len, hidden_size)
+        self.position_embeddings = nn.Embedding(max_len, hidden_size)
         self.emb_normalization = nn.LayerNorm(hidden_size)
         self.emb_dropout = nn.Dropout(p=dropout_prob)
 
-    def forward(self, input_token):
+    def forward(self, type_ids, input_token, position_ids):
+        type_embeddings = self.type_embeddings(type_ids)
         token_embeddings = self.token_embeddings(input_token)
-        # 生成固定位置信息
-        position_ids = []
-        input_count = list(input_token.size())[0]
-        for i in range(input_count):
-            tmp = [x for x in range(self.max_len)]
-            position_ids.append(tmp)
-        position_ids = torch.tensor(position_ids).to(device)
-        postion_embeddings = self.position_embeddings(position_ids)[:, :token_embeddings.size()[1], :]
-        embedding_x = token_embeddings + postion_embeddings
+        position_embeddings = self.position_embeddings(position_ids)
+        embedding_x = type_embeddings + token_embeddings + position_embeddings
         embedding_x = self.emb_normalization(embedding_x)
         embedding_x = self.emb_dropout(embedding_x)
         return embedding_x

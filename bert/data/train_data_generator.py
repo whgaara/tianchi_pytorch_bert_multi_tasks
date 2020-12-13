@@ -55,8 +55,8 @@ class TrainDataGenerator(object):
             tnews_current_tuple = self.tnews_data_tuple[:tnews_batch_size]
 
             self.oce_data_tuple = self.oce_data_tuple[oce_batch_size:]
-            self.ocn_data_tuple = self.ocn_data_tuple[oce_batch_size:]
-            self.tnews_data_tuple = self.tnews_data_tuple[oce_batch_size:]
+            self.ocn_data_tuple = self.ocn_data_tuple[ocn_batch_size:]
+            self.tnews_data_tuple = self.tnews_data_tuple[tnews_batch_size:]
         else:
             return None
 
@@ -102,6 +102,7 @@ class TrainDataGenerator(object):
 
         output['type_id'] = type_list
         output['input_token_ids'] = tokens_list
+        output['position_ids'] = [[x for x in range(batch_max_len)] for i in range(oce_batch_size + ocn_batch_size + tnews_batch_size)]
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
@@ -168,6 +169,7 @@ class EvalDataGenerator(object):
 
         output['type_id'] = [self.type_id]
         output['input_token_ids'] = tokens_list
+        output['position_ids'] = [[x for x in range(batch_max_len)]]
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}

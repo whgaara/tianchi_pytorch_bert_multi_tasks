@@ -30,7 +30,7 @@ Epochs = 32
 TrainRate = 0.95
 LearningRate = 1e-3
 AttentionMask = False
-HiddenLayerNum = 12
+HiddenLayerNum = 2
 SentenceLength = 256
 BalanceNum = 5000
 
@@ -43,7 +43,7 @@ OceBatchSize = OceTrainCount // NormalSteps
 OcnBatchSize = OcnTrainCount // NormalSteps
 TnewsBatchSize = TnewsTrainCount // NormalSteps
 FinetunePath = 'checkpoint/finetune/bert_classify_%s_%s.model' % (SentenceLength, HiddenLayerNum)
-PretrainPath = 'checkpoint/pretrain/pytorch_bert_pretrain.bin'
+PretrainPath = 'checkpoint/pretrain/pytorch_model.bin'
 # ## 训练调试参数结束 ## #
 
 # ## 通用参数 ## #
@@ -54,7 +54,7 @@ except:
     VocabSize = 0
 HiddenSize = 768
 IntermediateSize = 3072
-AttentionHeadNum = 12
+AttentionHeadNum = 1
 
 local2target_transformer = {
     'transformer_blocks.%s.multi_attention.q_dense.weight': 'bert.encoder.layer.%s.attention.self.query.weight',

@@ -34,7 +34,7 @@ class BertClassify(nn.Module):
         self.batch_size = OceBatchSize + OcnBatchSize + TnewsBatchSize
 
         # 申明网络
-        self.type_emb = TypeEmbedding()
+        # self.type_emb = TypeEmbedding()
         # self.token_emb = TokenEmbedding()
         # self.position_emb = PositionEmbedding()
         self.bert_emb = BertEmbeddings()
@@ -104,10 +104,10 @@ class BertClassify(nn.Module):
         finetune_model_dict.update(new_parameter_dict)
         self.load_state_dict(finetune_model_dict)
 
-    def forward(self, type_id, input_token, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
+    def forward(self, type_ids, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
         # embedding_x = self.type_emb(type_id) + self.token_emb(input_token) + self.position_emb()
-        embedding_x = self.type_emb(type_id) + self.bert_emb(input_token)
+        embedding_x = self.bert_emb(type_ids, input_token, position_ids)
         if AttentionMask:
             attention_mask = self.gen_attention_masks(segment_ids).to(device)
         else:

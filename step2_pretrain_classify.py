@@ -27,13 +27,6 @@ if __name__ == '__main__':
         for x, y in classes2num.items():
             num2classes[y] = x
 
-    # bert = torch.load(FinetunePath) if os.path.exists(FinetunePath) \
-    #     else BertClassifyBaseLine(oce_kinds_num=7,
-    #                               ocn_kinds_num=3,
-    #                               tnews_kinds_num=15,
-    #                               pretrain_model_path='bert_pretrain_model')
-    # bert = bert.to(device)
-
     bert = BertClassify(oce_kinds_num=7,
                         ocn_kinds_num=3,
                         tnews_kinds_num=15).to(device)
@@ -47,18 +40,6 @@ if __name__ == '__main__':
         print('开始加载外部预训练模型！')
         bert.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！')
-
-    # 使用分词训练
-    # oce_eval_set = BertEvalSetByWords(OceEvalPath, C2NPicklePath)
-    # oce_train_set = BertDataSetByWords(OceTrainPath, C2NPicklePath)
-    # ocn_eval_set = BertEvalSetByWords(OcnEvalPath, C2NPicklePath)
-    # ocn_train_set = BertDataSetByWords(OcnTrainPath, C2NPicklePath)
-    # tnews_eval_set = BertEvalSetByWords(TnewsEvalPath, C2NPicklePath)
-    # tnews_train_set = BertDataSetByWords(TnewsTrainPath, C2NPicklePath)
-    #
-    # oce_dataloader = DataLoader(dataset=oce_train_set, batch_size=OceBatchSize, shuffle=True, drop_last=False)
-    # ocn_dataloader = DataLoader(dataset=ocn_train_set, batch_size=OcnBatchSize, shuffle=True, drop_last=False)
-    # tnews_dataloader = DataLoader(dataset=tnews_train_set, batch_size=TnewsBatchSize, shuffle=True, drop_last=False)
 
     # 自定义数据生成
     batch_train_set = TrainDataGenerator(OceTrainPath, OcnTrainPath, TnewsTrainPath, C2NPicklePath)
@@ -84,25 +65,15 @@ if __name__ == '__main__':
 
         # train
         bert.train()
-        # oce_data_iter = tqdm(enumerate(oce_dataloader), desc='EP_%s:%d' % ('train', epoch),
-        #                      total=len(oce_dataloader), bar_format='{l_bar}{r_bar}')
-        # ocn_data_iter = tqdm(enumerate(ocn_dataloader), desc='EP_%s:%d' % ('train', epoch),
-        #                      total=len(ocn_dataloader), bar_format='{l_bar}{r_bar}')
-        # tnews_data_iter = tqdm(enumerate(tnews_dataloader), desc='EP_%s:%d' % ('train', epoch),
-        #                        total=len(tnews_dataloader), bar_format='{l_bar}{r_bar}')
         print_loss = 0.0
-
-        # for (i, oce_data), (j, ocn_data), (k, tnews_data) in zip(oce_data_iter, ocn_data_iter, tnews_data_iter):
-        #     if i == min(len(oce_data_iter), len(ocn_data_iter), len(tnews_data_iter)):
-        #         break
 
         while True:
             index += 1
             sys.stdout.write("\r{0}：{1}/{2}||{3}/{4}||{5}/{6}".format(
                 'Epoch%s' % epoch,
                 index*OceBatchSize, oce_total,
-                index*OcnBatchSize, oce_total,
-                index*TnewsBatchSize, oce_total))
+                index*OcnBatchSize, ocn_total,
+                index*TnewsBatchSize, tnews_total))
             sys.stdout.flush()
 
             train_batch_data = batch_train_set.gen_next_batch(OceBatchSize, OcnBatchSize, TnewsBatchSize)
@@ -110,44 +81,19 @@ if __name__ == '__main__':
                 break
 
             train_batch_data = {k: v.to(device) for k, v in train_batch_data.items()}
-            type_id = train_batch_data['type_id']
+            type_ids = train_batch_data['type_id']
             input_token = train_batch_data['input_token_ids']
+            position_ids = train_batch_data['position_ids']
             segment_ids = train_batch_data['segment_ids']
             labels = train_batch_data['token_ids_labels']
             oce_label = labels[:OceBatchSize]
             ocn_label = labels[OceBatchSize:OceBatchSize+OcnBatchSize]
             tnews_label = labels[OceBatchSize+OcnBatchSize:OceBatchSize+OcnBatchSize+TnewsBatchSize]
 
-            # oce_type_id = oce_data['type_id']
-            # oce_input_token = oce_data['input_token_ids']
-            # oce_segment_ids = oce_data['segment_ids']
-            # oce_label = oce_data['token_ids_labels']
-            #
-            # ocn_type_id = ocn_data['type_id']
-            # # ocn_separator = ocn_data['separator']
-            # ocn_input_token = ocn_data['input_token_ids']
-            # ocn_segment_ids = ocn_data['segment_ids']
-            # # -7为后续求损失做准备
-            # ocn_label = ocn_data['token_ids_labels'] - 7
-            #
-            # tnews_type_id = tnews_data['type_id']
-            # tnews_input_token = tnews_data['input_token_ids']
-            # tnews_segment_ids = tnews_data['segment_ids']
-            # # -10为后续求损失做准备
-            # tnews_label = tnews_data['token_ids_labels'] - 10
-            #
-            # # 对数据进行叠加和拼接
-            # oce_end_id = len(oce_input_token)
-            # ocn_end_id = len(ocn_input_token)
-            # tnews_end_id = len(tnews_input_token)
-            #
-            # type_id = torch.cat([oce_type_id, ocn_type_id, tnews_type_id])
-            # input_token = torch.cat([oce_input_token, ocn_input_token, tnews_input_token])
-            # segment_ids = torch.cat([oce_segment_ids, ocn_segment_ids, tnews_segment_ids])
-
             oce_output, ocn_output, tnews_output = bert(
-                type_id,
+                type_ids,
                 input_token,
+                position_ids,
                 segment_ids,
                 OceBatchSize,
                 OcnBatchSize,
@@ -243,11 +189,13 @@ if __name__ == '__main__':
                 oce_total += 1
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
+                position_ids = eval_data['position_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 oce_output, _, _ = bert(
                     type_id,
                     input_token,
+                    position_ids,
                     segment_ids,
                     1,
                     0,
@@ -278,11 +226,13 @@ if __name__ == '__main__':
                 ocn_total += 1
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
+                position_ids = eval_data['position_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 ocn_output, _, _ = bert(
                     type_id,
                     input_token,
+                    position_ids,
                     segment_ids,
                     1,
                     0,
@@ -313,11 +263,13 @@ if __name__ == '__main__':
                 tnews_total += 1
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
+                position_ids = eval_data['position_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 tnews_output, _, _ = bert(
                     type_id,
                     input_token,
+                    position_ids,
                     segment_ids,
                     1,
                     0,
