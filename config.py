@@ -28,11 +28,11 @@ Assistant = 'data/train_data/assistant.txt'
 # ## 训练调试参数开始 ## #
 Epochs = 32
 TrainRate = 0.95
+BalanceNum = 5000
 LearningRate = 1e-4
 AttentionMask = True
 HiddenLayerNum = 12
 SentenceLength = 256
-BalanceNum = 5000
 
 # 计算BatchSize
 NormalSteps = 3000
