@@ -30,7 +30,7 @@ Epochs = 32
 TrainRate = 0.95
 LearningRate = 1e-3
 AttentionMask = False
-HiddenLayerNum = 3
+HiddenLayerNum = 12
 SentenceLength = 256
 BalanceNum = 5000
 
