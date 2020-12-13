@@ -5,7 +5,7 @@ from config import device, HiddenSize, SentenceLength, VocabSize
 
 
 class BertEmbeddings(nn.Module):
-    def __init__(self, vocab_size, max_len, hidden_size, dropout_prob=0.1):
+    def __init__(self, vocab_size=VocabSize, max_len=SentenceLength, hidden_size=HiddenSize, dropout_prob=0.1):
         super(BertEmbeddings, self).__init__()
         self.max_len = max_len
         self.token_embeddings = nn.Embedding(vocab_size, hidden_size)
@@ -22,7 +22,7 @@ class BertEmbeddings(nn.Module):
             tmp = [x for x in range(self.max_len)]
             position_ids.append(tmp)
         position_ids = torch.tensor(position_ids).to(device)
-        postion_embeddings = self.position_embeddings(position_ids)
+        postion_embeddings = self.position_embeddings(position_ids)[:, :token_embeddings.size()[1], :]
         embedding_x = token_embeddings + postion_embeddings
         embedding_x = self.emb_normalization(embedding_x)
         embedding_x = self.emb_dropout(embedding_x)

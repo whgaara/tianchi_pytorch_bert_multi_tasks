@@ -38,12 +38,11 @@ class BertDataSetByWords(Dataset):
         current_words = token_text.split(' ')
         current_words = ['[CLS]'] + current_words
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
-        if len(tokens_id) < SentenceLength:
-            for i in range(SentenceLength - len(tokens_id)):
-                tokens_id.append(0)
-        else:
-            tokens_id = tokens_id[:SentenceLength]
-
+        # if len(tokens_id) < SentenceLength:
+        #     for i in range(SentenceLength - len(tokens_id)):
+        #         tokens_id.append(0)
+        # else:
+        #     tokens_id = tokens_id[:SentenceLength]
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['type_id'] = [self.type_id]
         # if self.type_id == 1:
@@ -89,11 +88,11 @@ class BertEvalSetByWords(Dataset):
         current_words = token_text.split(' ')
         current_words = ['[CLS]'] + current_words
         tokens_id = self.tokenizer.tokens_to_ids(current_words)
-        if len(tokens_id) < SentenceLength:
-            for i in range(SentenceLength - len(tokens_id)):
-                tokens_id.append(0)
-        else:
-            tokens_id = tokens_id[:SentenceLength]
+        # if len(tokens_id) < SentenceLength:
+        #     for i in range(SentenceLength - len(tokens_id)):
+        #         tokens_id.append(0)
+        # else:
+        #     tokens_id = tokens_id[:SentenceLength]
 
         segment_ids = [1 if x else 0 for x in tokens_id]
         output['type_id'] = torch.tensor([self.type_id], dtype=torch.long)

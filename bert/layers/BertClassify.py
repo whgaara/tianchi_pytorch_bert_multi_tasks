@@ -3,7 +3,7 @@ import torch.nn as nn
 from config import *
 from bert.layers.Gelu import GELU
 from bert.layers.Transformer import Transformer
-from bert.layers.BertEmbeddings import TokenEmbedding, PositionEmbedding, TypeEmbedding
+from bert.layers.BertEmbeddings import TokenEmbedding, PositionEmbedding, TypeEmbedding, BertEmbeddings
 
 
 class BertClassify(nn.Module):
@@ -35,8 +35,9 @@ class BertClassify(nn.Module):
 
         # 申明网络
         self.type_emb = TypeEmbedding()
-        self.token_emb = TokenEmbedding()
-        self.position_emb = PositionEmbedding()
+        # self.token_emb = TokenEmbedding()
+        # self.position_emb = PositionEmbedding()
+        self.bert_emb = BertEmbeddings()
         self.transformer_blocks = nn.ModuleList(
             Transformer(
                 hidden_size=self.hidden_size,
@@ -105,7 +106,8 @@ class BertClassify(nn.Module):
 
     def forward(self, type_id, input_token, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
-        embedding_x = self.type_emb(type_id) + self.token_emb(input_token) + self.position_emb()
+        # embedding_x = self.type_emb(type_id) + self.token_emb(input_token) + self.position_emb()
+        embedding_x = self.type_emb(type_id) + self.bert_emb(input_token)
         if AttentionMask:
             attention_mask = self.gen_attention_masks(segment_ids).to(device)
         else:
