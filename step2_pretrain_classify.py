@@ -47,7 +47,7 @@ if __name__ == '__main__':
     ocn_eval_set = EvalDataGenerator(OcnEvalPath, C2NPicklePath)
     tnews_eval_set = EvalDataGenerator(TnewsEvalPath, C2NPicklePath)
 
-    oce_total, ocn_total, tnews_total = batch_train_set.get_length()
+    oce_train_total, ocn_train_total, tnews_train_total = batch_train_set.get_length()
 
     optim = Adam(bert.parameters(), lr=LearningRate)
     oce_criterion = nn.CrossEntropyLoss().to(device)
@@ -71,9 +71,9 @@ if __name__ == '__main__':
             index += 1
             sys.stdout.write("\r{0}：{1}/{2}||{3}/{4}||{5}/{6}".format(
                 'Epoch%s' % epoch,
-                index*OceBatchSize, oce_total,
-                index*OcnBatchSize, ocn_total,
-                index*TnewsBatchSize, tnews_total))
+                index*OceBatchSize, oce_train_total,
+                index*OcnBatchSize, ocn_train_total,
+                index*TnewsBatchSize, tnews_train_total))
             sys.stdout.flush()
 
             train_batch_data = batch_train_set.gen_next_batch(OceBatchSize, OcnBatchSize, TnewsBatchSize)
@@ -211,7 +211,7 @@ if __name__ == '__main__':
                 # break
             acc_rate = float(oce_correct) / float(oce_total)
             acc_rate = round(acc_rate, 2)
-            print('oce验证集正确率：%s' % acc_rate)
+            print('\toce验证集正确率：%s' % acc_rate)
 
             # ocn验证部分
             endex = 0
@@ -248,7 +248,7 @@ if __name__ == '__main__':
                 # break
             acc_rate = float(ocn_correct) / float(ocn_total)
             acc_rate = round(acc_rate, 2)
-            print('ocn验证集正确率：%s' % acc_rate)
+            print('\tocn验证集正确率：%s' % acc_rate)
 
             # tnews验证部分
             endex = 0
@@ -285,7 +285,7 @@ if __name__ == '__main__':
                 # break
             acc_rate = float(tnews_correct) / float(tnews_total)
             acc_rate = round(acc_rate, 2)
-            print('tnews验证集正确率：%s' % acc_rate)
+            print('\ttnews验证集正确率：%s' % acc_rate)
 
             oce_f1 = get_f1(oce_label_list, oce_pred_list)
             ocn_f1 = get_f1(ocn_label_list, ocn_pred_list)
