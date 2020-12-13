@@ -54,7 +54,7 @@ except:
     VocabSize = 0
 HiddenSize = 768
 IntermediateSize = 3072
-AttentionHeadNum = 1
+AttentionHeadNum = 12
 
 local2target_transformer = {
     'transformer_blocks.%s.multi_attention.q_dense.weight': 'bert.encoder.layer.%s.attention.self.query.weight',
