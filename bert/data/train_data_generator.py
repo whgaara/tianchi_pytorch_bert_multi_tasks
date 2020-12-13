@@ -36,12 +36,24 @@ class TrainDataGenerator(object):
                     if line[0] and line[1]:
                         self.tnews_data_tuple.append([self.classes2num[line[0]]-10, line[1]])
 
+        self.source_oce_data = self.oce_data_tuple
+        self.source_ocn_data = self.ocn_data_tuple
+        self.source_tnews_data = self.tnews_data_tuple
+
         random.shuffle(self.oce_data_tuple)
         random.shuffle(self.ocn_data_tuple)
         random.shuffle(self.tnews_data_tuple)
 
     def get_length(self):
         return len(self.oce_data_tuple), len(self.ocn_data_tuple), len(self.tnews_data_tuple)
+
+    def ret_batch(self):
+        self.oce_data_tuple = self.source_oce_data
+        self.ocn_data_tuple = self.source_ocn_data
+        self.tnews_data_tuple = self.source_tnews_data
+        random.shuffle(self.oce_data_tuple)
+        random.shuffle(self.ocn_data_tuple)
+        random.shuffle(self.tnews_data_tuple)
 
     def gen_next_batch(self, oce_batch_size, ocn_batch_size, tnews_batch_size):
         output = {}
@@ -129,6 +141,11 @@ class EvalDataGenerator(object):
                     line = line.split('\t')
                     if line[0] and line[1]:
                         self.data_tuple.append([self.classes2num[line[0]], line[1]])
+        self.source_eval_data = self.data_tuple
+        random.shuffle(self.data_tuple)
+
+    def reset_batch(self):
+        self.data_tuple = self.source_eval_data
         random.shuffle(self.data_tuple)
 
     def gen_next_batch(self, batch_size):

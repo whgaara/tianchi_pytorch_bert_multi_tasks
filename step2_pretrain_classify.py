@@ -67,6 +67,8 @@ if __name__ == '__main__':
         bert.train()
         print_loss = 0.0
 
+        batch_train_set.ret_batch()
+
         while True:
             index += 1
             sys.stdout.write("\r{0}：{1}/{2}||{3}/{4}||{5}/{6}".format(
@@ -175,6 +177,10 @@ if __name__ == '__main__':
             ocn_label_list = []
             tnews_pred_list = []
             tnews_label_list = []
+
+            oce_eval_set.reset_batch()
+            ocn_eval_set.reset_batch()
+            tnews_eval_set.reset_batch()
 
             # oce验证部分
             endex = 0
