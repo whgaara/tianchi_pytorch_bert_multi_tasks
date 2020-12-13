@@ -3,4 +3,5 @@
 /submit/ocemotion_predict.json
 /submit/ocnli_predict.json
 /submit/tnews_predict.json
+/bert_pretrain_model
 function_eval.py
