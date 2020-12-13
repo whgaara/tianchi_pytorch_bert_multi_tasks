@@ -235,13 +235,13 @@ if __name__ == '__main__':
                 position_ids = eval_data['position_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
-                ocn_output, _, _ = bert(
+                _, ocn_output, _ = bert(
                     type_id,
                     input_token,
                     position_ids,
                     segment_ids,
-                    1,
                     0,
+                    1,
                     0
                 )
                 ocn_output = torch.nn.Softmax(dim=-1)(ocn_output)
@@ -272,14 +272,14 @@ if __name__ == '__main__':
                 position_ids = eval_data['position_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
-                tnews_output, _, _ = bert(
+                _, _, tnews_output = bert(
                     type_id,
                     input_token,
                     position_ids,
                     segment_ids,
-                    1,
                     0,
-                    0
+                    0,
+                    1
                 )
                 tnews_output = torch.nn.Softmax(dim=-1)(tnews_output)
                 tnews_topk = torch.topk(tnews_output, 1).indices.squeeze(0).tolist()[0]
