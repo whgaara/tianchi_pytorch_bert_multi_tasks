@@ -35,7 +35,7 @@ SentenceLength = 256
 BalanceNum = 5000
 
 # 计算BatchSize
-NormalSteps = 6000
+NormalSteps = 3000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
