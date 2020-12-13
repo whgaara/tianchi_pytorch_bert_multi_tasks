@@ -28,14 +28,14 @@ Assistant = 'data/train_data/assistant.txt'
 # ## 训练调试参数开始 ## #
 Epochs = 32
 TrainRate = 0.95
-LearningRate = 1e-3
+LearningRate = 1e-4
 AttentionMask = True
 HiddenLayerNum = 6
 SentenceLength = 256
 BalanceNum = 5000
 
 # 计算BatchSize
-NormalSteps = 3000
+NormalSteps = 2000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
