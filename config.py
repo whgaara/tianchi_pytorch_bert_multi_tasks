@@ -26,7 +26,7 @@ TnewsTestPath = 'data/TNEWS/test_data/tnews_test.txt'
 Assistant = 'data/train_data/assistant.txt'
 
 # ## 训练调试参数开始 ## #
-Epochs = 32
+Epochs = 64
 TrainRate = 0.95
 BalanceNum = 5000
 LearningRate = 1e-5
@@ -35,7 +35,7 @@ HiddenLayerNum = 12
 SentenceLength = 256
 
 # 计算BatchSize
-NormalSteps = 6000
+NormalSteps = 8000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
