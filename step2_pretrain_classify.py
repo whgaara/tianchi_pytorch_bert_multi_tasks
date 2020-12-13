@@ -34,12 +34,12 @@ if __name__ == '__main__':
     if os.path.exists(FinetunePath):
         print('开始加载本地预训练模型！')
         bert.load_finetune(FinetunePath)
-        bert = bert.to(device)
         print('完成加载本地预训练模型！\n')
     else:
         print('开始加载外部预训练模型！')
         bert.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！')
+    bert = bert.to(device)
 
     # 自定义数据生成
     batch_train_set = TrainDataGenerator(OceTrainPath, OcnTrainPath, TnewsTrainPath, C2NPicklePath)
@@ -55,7 +55,6 @@ if __name__ == '__main__':
     tnews_criterion = nn.CrossEntropyLoss().to(device)
 
     for epoch in range(Epochs):
-        index = 0
         oce_pred_list = []
         oce_label_list = []
         ocn_pred_list = []
@@ -67,6 +66,7 @@ if __name__ == '__main__':
         bert.train()
         print_loss = 0.0
 
+        index = 0
         batch_train_set.ret_batch()
 
         while True:
