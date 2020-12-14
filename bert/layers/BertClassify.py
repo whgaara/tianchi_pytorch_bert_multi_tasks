@@ -46,7 +46,7 @@ class BertClassify(nn.Module):
         # self.oce_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         self.ocn_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         # self.tnews_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
-        self.dropout1 = nn.Dropout(0.1)
+        # self.dropout1 = nn.Dropout(0.1)
         self.softmax_d1 = nn.Softmax(dim=-1)
         # self.gelu = GELU()
 
@@ -55,9 +55,9 @@ class BertClassify(nn.Module):
         self.tnews_layer2 = nn.Linear(self.hidden_size, self.batch_size)
         # self.attention_layer = nn.Linear(self.hidden_size, self.batch_size)
         self.dropout2 = nn.Dropout(0.1)
-        self.oce_layer_norm2 = nn.LayerNorm(7)
-        self.ocn_layer_norm2 = nn.LayerNorm(3)
-        self.tnews_layer_norm2 = nn.LayerNorm(15)
+        # self.oce_layer_norm2 = nn.LayerNorm(7)
+        # self.ocn_layer_norm2 = nn.LayerNorm(3)
+        # self.tnews_layer_norm2 = nn.LayerNorm(15)
 
         self.oce_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 7)
         # self.ocn_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 3)
@@ -112,7 +112,7 @@ class BertClassify(nn.Module):
             oce_attention = self.dropout2(self.softmax_d1(oce_attention).unsqueeze(1))
             # oce_attention = self.layer_norm2(oce_attention)
             oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
-            oce_output = self.oce_layer_norm2(torch.matmul(oce_attention, oce_value).squeeze(1))
+            oce_output = torch.matmul(oce_attention, oce_value).squeeze(1)
         else:
             oce_output = None
         if ocn_end_id > 0:
@@ -123,9 +123,9 @@ class BertClassify(nn.Module):
                 tmp_list.append(feedforward_x[oce_end_id+i:oce_end_id+i+1, j+1, :])
             transformer_ocn = torch.cat(tmp_list)
             #####
-            transformer_ocn = self.dropout1(self.ocn_layer1(transformer_ocn))
+            transformer_ocn = self.dropout2(self.ocn_layer1(transformer_ocn))
             transformer_ocn = self.ocn_layer2(transformer_ocn)
-            ocn_output = self.ocn_layer_norm2(transformer_ocn)
+            ocn_output = transformer_ocn
         else:
             ocn_output = None
         if tnews_end_id > 0:
@@ -139,7 +139,7 @@ class BertClassify(nn.Module):
             tnews_attention = self.dropout2(self.softmax_d1(tnews_attention).unsqueeze(1))
             # tnews_attention = self.layer_norm2(tnews_attention)
             tnews_value = self.tnews_layer3(transformer_tnews).contiguous().view(-1, self.batch_size, 15)
-            tnews_output = self.tnews_layer_norm2(torch.matmul(tnews_attention, tnews_value).squeeze(1))
+            tnews_output = torch.matmul(tnews_attention, tnews_value).squeeze(1)
         else:
             tnews_output = None
 
