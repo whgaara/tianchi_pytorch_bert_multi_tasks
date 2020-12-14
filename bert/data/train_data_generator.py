@@ -47,7 +47,7 @@ class TrainDataGenerator(object):
     def get_length(self):
         return len(self.oce_data_tuple), len(self.ocn_data_tuple), len(self.tnews_data_tuple)
 
-    def ret_batch(self):
+    def reset_batch(self):
         self.oce_data_tuple = self.source_oce_data
         self.ocn_data_tuple = self.source_ocn_data
         self.tnews_data_tuple = self.source_tnews_data

@@ -67,7 +67,7 @@ if __name__ == '__main__':
         print_loss = 0.0
 
         index = 0
-        batch_train_set.ret_batch()
+        batch_train_set.reset_batch()
 
         while True:
             index += 1
