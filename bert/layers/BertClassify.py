@@ -83,9 +83,9 @@ class BertClassify(nn.Module):
         finetune_model_dict.update(new_parameter_dict)
         self.load_state_dict(finetune_model_dict)
 
-    def forward(self, type_ids, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id, separators):
+    def forward(self, type_ids, input_token, position_ids, part_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
-        embedding_x = self.bert_emb(type_ids, input_token, position_ids)
+        embedding_x = self.bert_emb(type_ids, input_token, position_ids, part_ids)
         if AttentionMask:
             attention_mask = self.gen_attention_masks(segment_ids).to(device)
         else:

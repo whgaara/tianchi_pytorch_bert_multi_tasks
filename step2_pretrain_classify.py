@@ -86,6 +86,7 @@ if __name__ == '__main__':
             type_ids = train_batch_data['type_id']
             input_token = train_batch_data['input_token_ids']
             position_ids = train_batch_data['position_ids']
+            part_ids = train_batch_data['part_ids']
             segment_ids = train_batch_data['segment_ids']
             labels = train_batch_data['token_ids_labels']
 
@@ -101,11 +102,11 @@ if __name__ == '__main__':
                 type_ids,
                 input_token,
                 position_ids,
+                part_ids,
                 segment_ids,
                 OceBatchSize,
                 OcnBatchSize,
-                TnewsBatchSize,
-                separators
+                TnewsBatchSize
             )
 
             # 多任务损失
@@ -150,7 +151,7 @@ if __name__ == '__main__':
             tnews_label_list += tnews_label
 
             # 调试验证部分
-            # break
+            break
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
@@ -203,17 +204,18 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
+                part_ids = eval_data['part_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 oce_output, _, _ = bert(
                     type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     1,
                     0,
-                    0,
-                    []
+                    0
                 )
                 oce_output = torch.nn.Softmax(dim=-1)(oce_output)
                 oce_topk = torch.topk(oce_output, 1).indices.squeeze(0).tolist()[0]
@@ -222,7 +224,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == oce_topk:
                     oce_correct += 1
-                # break
+                break
             acc_rate = float(oce_correct) / float(oce_total)
             acc_rate = round(acc_rate, 2)
             print('\toce验证集正确率：%s' % acc_rate)
@@ -241,6 +243,7 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
+                part_ids = eval_data['part_ids'].to(device)
                 separators = eval_data['separators'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
@@ -248,11 +251,11 @@ if __name__ == '__main__':
                     type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     0,
                     1,
-                    0,
-                    separators
+                    0
                 )
                 ocn_output = torch.nn.Softmax(dim=-1)(ocn_output)
                 ocn_topk = torch.topk(ocn_output, 1).indices.squeeze(0).tolist()[0]
@@ -261,7 +264,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == ocn_topk:
                     ocn_correct += 1
-                # break
+                break
             acc_rate = float(ocn_correct) / float(ocn_total)
             acc_rate = round(acc_rate, 2)
             print('\tocn验证集正确率：%s' % acc_rate)
@@ -280,17 +283,18 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
+                part_ids = eval_data['part_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, _, tnews_output = bert(
                     type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     0,
                     0,
-                    1,
-                    []
+                    1
                 )
                 tnews_output = torch.nn.Softmax(dim=-1)(tnews_output)
                 tnews_topk = torch.topk(tnews_output, 1).indices.squeeze(0).tolist()[0]
@@ -299,7 +303,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == tnews_topk:
                     tnews_correct += 1
-                # break
+                break
             acc_rate = float(tnews_correct) / float(tnews_total)
             acc_rate = round(acc_rate, 2)
             print('\ttnews验证集正确率：%s' % acc_rate)
