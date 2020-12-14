@@ -76,6 +76,7 @@ class TrainDataGenerator(object):
         label_list = []
         tokens_list = []
         segments_list = []
+        separator_list = []
 
         for x in oce_current_tuple:
             type_list.append([0])
@@ -88,6 +89,12 @@ class TrainDataGenerator(object):
         for x in ocn_current_tuple:
             type_list.append([1])
             label_list.append(x[0])
+
+            # try
+            separator_index = x[1].split(' ').index('|')
+            separator_list.append(separator_index)
+            #####
+
             token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
@@ -117,6 +124,11 @@ class TrainDataGenerator(object):
         output['position_ids'] = [[x for x in range(batch_max_len)] for i in range(oce_batch_size + ocn_batch_size + tnews_batch_size)]
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
+
+        # try
+        output['separators'] = separator_list
+        #####
+
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
         return instance
 
@@ -160,12 +172,17 @@ class EvalDataGenerator(object):
         label_list = []
         tokens_list = []
         segments_list = []
+        separator_list = []
 
         for x in current_tuple:
             if self.type_id == 0:
                 label_list.append(x[0])
             if self.type_id == 1:
                 label_list.append(x[0] - 7)
+                # try
+                separator_index = x[1].split(' ').index('|')
+                separator_list.append(separator_index)
+                #####
             if self.type_id == 2:
                 label_list.append(x[0] - 10)
             token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
@@ -189,5 +206,8 @@ class EvalDataGenerator(object):
         output['position_ids'] = [[x for x in range(batch_max_len)]]
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
+        # try
+        output['separators'] = separator_list
+        #####
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
         return instance

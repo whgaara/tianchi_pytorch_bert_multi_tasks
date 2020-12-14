@@ -51,10 +51,10 @@ class BertClassify(nn.Module):
         self.softmax_d1 = nn.Softmax(dim=-1)
         self.gelu = GELU()
 
-        # self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
-        # self.ocn_layer2 = nn.Linear(self.hidden_size, self.batch_size)
-        # self.tnews_layer2 = nn.Linear(self.hidden_size, self.batch_size)
-        self.attention_layer = nn.Linear(self.hidden_size, self.batch_size)
+        self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        self.ocn_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        self.tnews_layer2 = nn.Linear(self.hidden_size, self.batch_size)
+        # self.attention_layer = nn.Linear(self.hidden_size, self.batch_size)
         self.dropout2 = nn.Dropout(0.1)
         self.layer_norm2 = nn.LayerNorm(self.batch_size)
 
@@ -83,7 +83,7 @@ class BertClassify(nn.Module):
         finetune_model_dict.update(new_parameter_dict)
         self.load_state_dict(finetune_model_dict)
 
-    def forward(self, type_ids, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
+    def forward(self, type_ids, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id, separators):
         # embedding
         embedding_x = self.bert_emb(type_ids, input_token, position_ids)
         if AttentionMask:
@@ -106,8 +106,8 @@ class BertClassify(nn.Module):
             # transformer_oce = self.gelu(transformer_oce)
             # transformer_oce = self.dropout1(transformer_oce)
             # transformer_oce = self.layer_norm1(transformer_oce)
-            # oce_attention = self.oce_layer2(transformer_oce)
-            oce_attention = self.attention_layer(transformer_oce)
+            oce_attention = self.oce_layer2(transformer_oce)
+            # oce_attention = self.attention_layer(transformer_oce)
             oce_attention = self.dropout2(self.softmax_d1(oce_attention).unsqueeze(1))
             # oce_attention = self.layer_norm2(oce_attention)
             oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
@@ -115,13 +115,21 @@ class BertClassify(nn.Module):
         else:
             oce_output = None
         if ocn_end_id > 0:
-            transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
+            # transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
+
+            # try
+            tmp_list = []
+            for i, j in enumerate(separators.tolist()):
+                tmp_list.append(feedforward_x[oce_end_id+i:oce_end_id+i+1, j+1, :])
+            transformer_ocn = torch.cat(tmp_list)
+            #####
+
             # transformer_oce = self.ocn_layer1(transformer_ocn)
             # transformer_ocn = self.gelu(transformer_oce)
             # transformer_ocn = self.dropout1(transformer_ocn)
             # transformer_ocn = self.layer_norm1(transformer_ocn)
-            # ocn_attention = self.ocn_layer2(transformer_ocn)
-            ocn_attention = self.attention_layer(transformer_ocn)
+            ocn_attention = self.ocn_layer2(transformer_ocn)
+            # ocn_attention = self.attention_layer(transformer_ocn)
             ocn_attention = self.dropout2(self.softmax_d1(ocn_attention).unsqueeze(1))
             # ocn_attention = self.layer_norm2(ocn_attention)
             ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
@@ -134,8 +142,8 @@ class BertClassify(nn.Module):
             # transformer_tnews = self.gelu(transformer_tnews)
             # transformer_tnews = self.dropout1(transformer_tnews)
             # transformer_tnews = self.layer_norm1(transformer_tnews)
-            # tnews_attention = self.tnews_layer2(transformer_tnews)
-            tnews_attention = self.attention_layer(transformer_tnews)
+            tnews_attention = self.tnews_layer2(transformer_tnews)
+            # tnews_attention = self.attention_layer(transformer_tnews)
             tnews_attention = self.dropout2(self.softmax_d1(tnews_attention).unsqueeze(1))
             # tnews_attention = self.layer_norm2(tnews_attention)
             tnews_value = self.tnews_layer3(transformer_tnews).contiguous().view(-1, self.batch_size, 15)

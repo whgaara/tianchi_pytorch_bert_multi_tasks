@@ -88,6 +88,11 @@ if __name__ == '__main__':
             position_ids = train_batch_data['position_ids']
             segment_ids = train_batch_data['segment_ids']
             labels = train_batch_data['token_ids_labels']
+
+            # try
+            separators = train_batch_data['separators']
+            #####
+
             oce_label = labels[:OceBatchSize]
             ocn_label = labels[OceBatchSize:OceBatchSize+OcnBatchSize]
             tnews_label = labels[OceBatchSize+OcnBatchSize:OceBatchSize+OcnBatchSize+TnewsBatchSize]
@@ -99,7 +104,8 @@ if __name__ == '__main__':
                 segment_ids,
                 OceBatchSize,
                 OcnBatchSize,
-                TnewsBatchSize
+                TnewsBatchSize,
+                separators
             )
 
             # 多任务损失
