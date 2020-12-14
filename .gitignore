@@ -4,4 +4,5 @@
 /submit/ocnli_predict.json
 /submit/tnews_predict.json
 /bert_pretrain_model
+nohup.out
 function_eval.py
