@@ -151,7 +151,7 @@ if __name__ == '__main__':
             tnews_label_list += tnews_label
 
             # 调试验证部分
-            break
+            # break
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
 
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == oce_topk:
                     oce_correct += 1
-                break
+                # break
             acc_rate = float(oce_correct) / float(oce_total)
             acc_rate = round(acc_rate, 2)
             print('\toce验证集正确率：%s' % acc_rate)
@@ -264,7 +264,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == ocn_topk:
                     ocn_correct += 1
-                break
+                # break
             acc_rate = float(ocn_correct) / float(ocn_total)
             acc_rate = round(acc_rate, 2)
             print('\tocn验证集正确率：%s' % acc_rate)
@@ -303,7 +303,7 @@ if __name__ == '__main__':
                 # 累计数值
                 if label == tnews_topk:
                     tnews_correct += 1
-                break
+                # break
             acc_rate = float(tnews_correct) / float(tnews_total)
             acc_rate = round(acc_rate, 2)
             print('\ttnews验证集正确率：%s' % acc_rate)
