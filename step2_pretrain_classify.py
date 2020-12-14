@@ -297,8 +297,8 @@ if __name__ == '__main__':
             ocn_f1 = get_f1(ocn_label_list, ocn_pred_list)
             tnews_f1 = get_f1(tnews_label_list, tnews_pred_list)
             avg_f1 = (oce_f1 + ocn_f1 + tnews_f1) / 3
-            print(epoch, 'oce f1 is:', oce_f1)
-            print(epoch, 'ocn f1 is:', ocn_f1)
-            print(epoch, 'tnews f1 is:', tnews_f1)
-            print(epoch, 'average f1 is:', avg_f1)
+            print(epoch, 'oce eval f1 is:', oce_f1)
+            print(epoch, 'ocn eval f1 is:', ocn_f1)
+            print(epoch, 'tnews eval f1 is:', tnews_f1)
+            print(epoch, 'average eval f1 is:', avg_f1)
             print('\n')
