@@ -212,9 +212,11 @@ class EvalDataGenerator(object):
         for i, tokens in enumerate(tokens_list):
             if len(tokens) < batch_max_len:
                 tokens_list[i] = tokens_list[i] + [0] * (batch_max_len - len(tokens))
+                part_list[i] = part_list[i] + [0] * (batch_max_len - len(tokens))
                 segments_list[i] = segments_list[i] + [0] * (batch_max_len - len(tokens))
             else:
                 tokens_list[i] = tokens_list[i][:batch_max_len]
+                part_list[i] = part_list[i][:batch_max_len]
                 segments_list[i] = segments_list[i][:batch_max_len]
 
         output['type_id'] = [self.type_id]
