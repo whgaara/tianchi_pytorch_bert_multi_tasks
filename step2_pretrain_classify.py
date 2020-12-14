@@ -211,7 +211,8 @@ if __name__ == '__main__':
                     segment_ids,
                     1,
                     0,
-                    0
+                    0,
+                    []
                 )
                 oce_output = torch.nn.Softmax(dim=-1)(oce_output)
                 oce_topk = torch.topk(oce_output, 1).indices.squeeze(0).tolist()[0]
@@ -239,6 +240,7 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
+                separators = eval_data['separators'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, ocn_output, _ = bert(
@@ -248,7 +250,8 @@ if __name__ == '__main__':
                     segment_ids,
                     0,
                     1,
-                    0
+                    0,
+                    separators
                 )
                 ocn_output = torch.nn.Softmax(dim=-1)(ocn_output)
                 ocn_topk = torch.topk(ocn_output, 1).indices.squeeze(0).tolist()[0]
@@ -285,7 +288,8 @@ if __name__ == '__main__':
                     segment_ids,
                     0,
                     0,
-                    1
+                    1,
+                    []
                 )
                 tnews_output = torch.nn.Softmax(dim=-1)(tnews_output)
                 tnews_topk = torch.topk(tnews_output, 1).indices.squeeze(0).tolist()[0]
