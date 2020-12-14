@@ -103,14 +103,8 @@ class BertClassify(nn.Module):
         # classify
         if oce_end_id > 0:
             transformer_oce = feedforward_x[:oce_end_id, 0, :]
-            # transformer_oce = self.oce_layer1(transformer_oce)
-            # transformer_oce = self.gelu(transformer_oce)
-            # transformer_oce = self.dropout1(transformer_oce)
-            # transformer_oce = self.layer_norm1(transformer_oce)
             oce_attention = self.oce_layer2(transformer_oce)
-            # oce_attention = self.attention_layer(transformer_oce)
             oce_attention = self.dropout2(self.softmax_d1(oce_attention).unsqueeze(1))
-            # oce_attention = self.layer_norm2(oce_attention)
             oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
             oce_output = torch.matmul(oce_attention, oce_value).squeeze(1)
         else:
@@ -130,14 +124,8 @@ class BertClassify(nn.Module):
             ocn_output = None
         if tnews_end_id > 0:
             transformer_tnews = feedforward_x[oce_end_id+ocn_end_id:oce_end_id+ocn_end_id+tnews_end_id, 0, :]
-            # transformer_tnews = self.tnews_layer1(transformer_tnews)
-            # transformer_tnews = self.gelu(transformer_tnews)
-            # transformer_tnews = self.dropout1(transformer_tnews)
-            # transformer_tnews = self.layer_norm1(transformer_tnews)
             tnews_attention = self.tnews_layer2(transformer_tnews)
-            # tnews_attention = self.attention_layer(transformer_tnews)
             tnews_attention = self.dropout2(self.softmax_d1(tnews_attention).unsqueeze(1))
-            # tnews_attention = self.layer_norm2(tnews_attention)
             tnews_value = self.tnews_layer3(transformer_tnews).contiguous().view(-1, self.batch_size, 15)
             tnews_output = torch.matmul(tnews_attention, tnews_value).squeeze(1)
         else:
