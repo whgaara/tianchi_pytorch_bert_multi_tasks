@@ -41,7 +41,7 @@ class BertClassify(nn.Module):
             for _ in range(self.num_hidden_layers)
         )
         # self.oce_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
-        # self.ocn_layer1 = nn.Linear(self.hidden_size, 3)
+        self.ocn_layer1 = nn.Linear(self.hidden_size, 3)
         # self.tnews_layer1 = nn.Linear(self.hidden_size, self.hidden_size)
         # self.dropout1 = nn.Dropout(0.1)
         self.softmax_d1 = nn.Softmax(dim=-1)
@@ -119,12 +119,12 @@ class BertClassify(nn.Module):
             oce_output = None
         if ocn_end_id > 0:
             transformer_ocn = feedforward_x[oce_end_id:oce_end_id+ocn_end_id, 0, :]
-            ocn_attention = self.ocn_layer2(transformer_ocn)
-            ocn_attention = self.dropout2(self.softmax_d1(ocn_attention).unsqueeze(1))
-            ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
-            ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
+            # ocn_attention = self.ocn_layer2(transformer_ocn)
+            # ocn_attention = self.dropout2(self.softmax_d1(ocn_attention).unsqueeze(1))
+            # ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
+            # ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
 
-            # ocn_output = self.ocn_layer1(transformer_ocn)
+            ocn_output = self.ocn_layer1(transformer_ocn)
 
             # try
             # tmp_list = []
