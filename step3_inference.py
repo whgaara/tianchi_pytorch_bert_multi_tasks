@@ -84,7 +84,7 @@ class Inference(object):
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
                 position_ids = torch.tensor(position_ids, dtype=torch.long).unsqueeze(0).to(device)
-                separator_index = current_words.split(' ').index('|')
+                separator_index = current_words.index('|')
                 part_ids = [1] * separator_index + [2] * (len(tokens_id) - separator_index)
                 segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(
                     0).to(device)
