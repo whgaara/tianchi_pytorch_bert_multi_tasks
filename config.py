@@ -31,7 +31,7 @@ TrainRate = 0.95
 BalanceNum = 5000
 LearningRate = 5e-6
 AttentionMask = True
-HiddenLayerNum = 6
+HiddenLayerNum = 3
 SentenceLength = 256
 
 # 计算BatchSize
