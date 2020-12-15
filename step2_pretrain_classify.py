@@ -11,7 +11,6 @@ from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
 from bert.data.classify_dataset import *
 from bert.layers.BertClassify import BertClassify
-from bert.layers.BertClassifyBaseLine import BertClassifyBaseLine
 from bert.data.train_data_generator import TrainDataGenerator, EvalDataGenerator
 
 
