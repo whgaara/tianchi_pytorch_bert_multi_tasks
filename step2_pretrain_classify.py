@@ -40,6 +40,8 @@ if __name__ == '__main__':
         print('完成加载外部预训练模型！\n')
     bert = bert.to(device)
 
+    best_eval_f1 = 0
+
     # 自定义数据生成
     batch_train_set = TrainDataGenerator(OceTrainPath, OcnTrainPath, TnewsTrainPath, C2NPicklePath)
     oce_eval_set = EvalDataGenerator(OceEvalPath, C2NPicklePath)
@@ -161,12 +163,6 @@ if __name__ == '__main__':
         print(epoch, 'ocn f1 is:', ocn_f1)
         print(epoch, 'tnews f1 is:', tnews_f1)
         print(epoch, 'average f1 is:', avg_f1)
-
-        # save
-        output_path = FinetunePath + '.ep%d' % epoch
-        torch.save(bert.cpu(), output_path)
-        bert.to(device)
-        print('EP:%d Model Saved on:%s' % (epoch, output_path))
 
         # eval
         bert.eval()
@@ -310,6 +306,14 @@ if __name__ == '__main__':
             ocn_f1 = get_f1(ocn_label_list, ocn_pred_list)
             tnews_f1 = get_f1(tnews_label_list, tnews_pred_list)
             avg_f1 = (oce_f1 + ocn_f1 + tnews_f1) / 3
+
+            # save
+            if avg_f1 > best_eval_f1:
+                best_eval_f1 = avg_f1
+                torch.save(bert.cpu(), FinetunePath)
+                bert.to(device)
+                print('EP:%d Model Saved on:%s' % (epoch, FinetunePath))
+
             print(epoch, 'oce eval f1 is:', oce_f1)
             print(epoch, 'ocn eval f1 is:', ocn_f1)
             print(epoch, 'tnews eval f1 is:', tnews_f1)

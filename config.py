@@ -26,12 +26,12 @@ TnewsTestPath = 'data/TNEWS/test_data/tnews_test.txt'
 Assistant = 'data/train_data/assistant.txt'
 
 # ## 训练调试参数开始 ## #
-Epochs = 64
+Epochs = 16
 TrainRate = 0.95
 BalanceNum = 5000
 LearningRate = 1e-5
 AttentionMask = True
-HiddenLayerNum = 3
+HiddenLayerNum = 6
 SentenceLength = 256
 
 # 计算BatchSize
