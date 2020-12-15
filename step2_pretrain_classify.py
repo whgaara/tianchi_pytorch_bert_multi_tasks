@@ -20,30 +20,6 @@ def get_f1(l_t, l_p):
     return marco_f1_score
 
 
-class FGM(object):
-    def __init__(self, model):
-        self.model = model
-        self.backup = {}
-
-    def attack(self, emb_g, epsilon=0.25, emb_name='token_embeddings.weight'):
-        # emb_name这个参数要换成你模型中embedding的参数名
-        for name, param in self.model.named_parameters():
-            if param.requires_grad and emb_name in name:
-                self.backup[name] = param.data.clone()
-                norm = torch.norm(emb_g)
-                if norm != 0 and not torch.isnan(norm):
-                    r_at = epsilon * param.grad / norm
-                    param.data.add_(r_at)
-
-    def restore(self, emb_name='token_embeddings.weight'):
-        # emb_name这个参数要换成你模型中embedding的参数名
-        for name, param in self.model.named_parameters():
-            if param.requires_grad and emb_name in name:
-                assert name in self.backup
-                param.data = self.backup[name]
-        self.backup = {}
-
-
 if __name__ == '__main__':
     with open(C2NPicklePath, 'rb') as f:
         classes2num = pickle.load(f)
@@ -64,8 +40,6 @@ if __name__ == '__main__':
         bert.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！\n')
     bert = bert.to(device)
-
-    fgm = FGM(bert)
 
     # 自定义数据生成
     batch_train_set = TrainDataGenerator(OceTrainPath, OcnTrainPath, TnewsTrainPath, C2NPicklePath)
@@ -135,10 +109,6 @@ if __name__ == '__main__':
                 OcnBatchSize,
                 TnewsBatchSize
             )
-            emb_g = None
-            def extract(g):
-                global emb_g
-                emb_g = g
             oce_loss = oce_criterion(oce_output, oce_label)
             ocn_loss = ocn_criterion(ocn_output, ocn_label)
             tnews_loss = tnews_criterion(tnews_output, tnews_label)
@@ -149,28 +119,9 @@ if __name__ == '__main__':
             #              + ocn_loss * ocn_loss_weight \
             #              + tnews_loss * tnews_loss_weight
             total_loss = oce_loss + ocn_loss + tnews_loss
-            bert.bert_emb.token_embeddings.weight.register_hook(extract)
-            total_loss.backward()
             print_loss = total_loss.item()
 
-            # 对抗训练，反向传播，并在正常的grad基础上，累加对抗训练的梯度
-            fgm.attack(emb_g)
-            fgm_oce_output, fgm_ocn_output, fgm_tnews_output = fgm.model(
-                type_ids,
-                input_token,
-                position_ids,
-                part_ids,
-                segment_ids,
-                OceBatchSize,
-                OcnBatchSize,
-                TnewsBatchSize)
-            fgm_oce_loss = oce_criterion(fgm_oce_output, oce_label)
-            fgm_ocn_loss = ocn_criterion(fgm_ocn_output, ocn_label)
-            fgm_tnews_loss = tnews_criterion(fgm_tnews_output, tnews_label)
-            total_loss = fgm_oce_loss + fgm_ocn_loss + fgm_tnews_loss
-            fgm.restore()
             total_loss.backward()
-
             optim.step()
             optim.zero_grad()
 
