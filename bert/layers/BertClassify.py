@@ -72,10 +72,10 @@ class BertClassify(nn.Module):
         finetune_model_dict = self.state_dict()
         new_parameter_dict = {}
         # 加载embedding层参数
-        for key in local2target_emb:
-            local = key
-            target = local2target_emb[key]
-            new_parameter_dict[local] = pretrain_model_dict[target]
+        # for key in local2target_emb:
+        #     local = key
+        #     target = local2target_emb[key]
+        #     new_parameter_dict[local] = pretrain_model_dict[target]
         # 加载transformerblock层参数
         for i in range(self.num_hidden_layers):
             for key in local2target_transformer:
