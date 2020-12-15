@@ -86,7 +86,7 @@ class BertClassify(nn.Module):
         for key, value in new_parameter_dict.items():
             if key in finetune_model_dict:
                 if key == 'bert_emb.token_embeddings.weight':
-                    finetune_model_dict[key] = torch.cat([new_parameter_dict[key][:21128], finetune_model_dict[key][21128:]])
+                    finetune_model_dict[key] = torch.cat([new_parameter_dict[key][:21128].to(device), finetune_model_dict[key][21128:].to(device)])
                 else:
                     finetune_model_dict[key] = new_parameter_dict[key]
         self.load_state_dict(finetune_model_dict)
