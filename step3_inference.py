@@ -47,16 +47,18 @@ class Inference(object):
                 current_words = input.split(' ')
                 current_words = ['[CLS]'] + current_words
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
-                if len(tokens_id) > SentenceLength:
-                    tokens_id = tokens_id[:SentenceLength]
+                # if len(tokens_id) > SentenceLength:
+                #     tokens_id = tokens_id[:SentenceLength]
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
                 position_ids = torch.tensor(position_ids, dtype=torch.long).unsqueeze(0).to(device)
+                part_ids = torch.tensor([1] * len(tokens_id), dtype=torch.long).unsqueeze(0).to(device)
                 segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(0).to(device)
                 oce_output, _, _ = self.model(
                     oce_type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     1,
                     0,
@@ -77,17 +79,20 @@ class Inference(object):
                 current_words = input.split(' ')
                 current_words = ['[CLS]'] + current_words
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
-                if len(tokens_id) > SentenceLength:
-                    tokens_id = tokens_id[:SentenceLength]
+                # if len(tokens_id) > SentenceLength:
+                #     tokens_id = tokens_id[:SentenceLength]
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
                 position_ids = torch.tensor(position_ids, dtype=torch.long).unsqueeze(0).to(device)
+                separator_index = current_words.split(' ').index('|')
+                part_ids = [1] * separator_index + [2] * (len(tokens_id) - separator_index)
                 segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(
                     0).to(device)
                 _, ocn_output, _ = self.model(
                     ocn_type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     0,
                     1,
@@ -108,17 +113,19 @@ class Inference(object):
                 current_words = input.split(' ')
                 current_words = ['[CLS]'] + current_words
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
-                if len(tokens_id) > SentenceLength:
-                    tokens_id = tokens_id[:SentenceLength]
+                # if len(tokens_id) > SentenceLength:
+                #     tokens_id = tokens_id[:SentenceLength]
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
                 position_ids = torch.tensor(position_ids, dtype=torch.long).unsqueeze(0).to(device)
+                part_ids = torch.tensor([1] * len(tokens_id), dtype=torch.long).unsqueeze(0).to(device)
                 segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(
                     0).to(device)
                 _, _, tnews_output = self.model(
                     tnews_type_id,
                     input_token,
                     position_ids,
+                    part_ids,
                     segment_ids,
                     0,
                     0,
