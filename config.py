@@ -35,7 +35,7 @@ HiddenLayerNum = 6
 SentenceLength = 256
 
 # 计算BatchSize
-NormalSteps = 2000
+NormalSteps = 3000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
