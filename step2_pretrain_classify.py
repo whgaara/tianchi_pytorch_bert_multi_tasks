@@ -112,13 +112,13 @@ if __name__ == '__main__':
             oce_loss = oce_criterion(oce_output, oce_label)
             ocn_loss = ocn_criterion(ocn_output, ocn_label)
             tnews_loss = tnews_criterion(tnews_output, tnews_label)
-            # oce_loss_weight = torch.div(oce_loss, oce_loss + ocn_loss + tnews_loss)
-            # ocn_loss_weight = torch.div(ocn_loss, oce_loss + ocn_loss + tnews_loss)
-            # tnews_loss_weight = torch.div(tnews_loss, oce_loss + ocn_loss + tnews_loss)
-            # total_loss = oce_loss * oce_loss_weight \
-            #              + ocn_loss * ocn_loss_weight \
-            #              + tnews_loss * tnews_loss_weight
-            total_loss = oce_loss + ocn_loss + tnews_loss
+            oce_loss_weight = torch.div(oce_loss, oce_loss + ocn_loss + tnews_loss)
+            ocn_loss_weight = torch.div(ocn_loss, oce_loss + ocn_loss + tnews_loss)
+            tnews_loss_weight = torch.div(tnews_loss, oce_loss + ocn_loss + tnews_loss)
+            total_loss = oce_loss * oce_loss_weight \
+                         + ocn_loss * ocn_loss_weight \
+                         + tnews_loss * tnews_loss_weight
+            # total_loss = oce_loss + ocn_loss + tnews_loss
             print_loss = total_loss.item()
 
             total_loss.backward()
