@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print('完成加载本地预训练模型！\n')
     else:
         print('开始加载外部预训练模型！')
-        bert.load_pretrain(PretrainPath)
+        # bert.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！\n')
     bert = bert.to(device)
 
