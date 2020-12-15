@@ -13,7 +13,6 @@ class BertClassify(nn.Module):
                  tnews_kinds_num,
                  vocab_size=VocabSize,
                  hidden=HiddenSize,
-                 max_len=SentenceLength,
                  num_hidden_layers=HiddenLayerNum,
                  attention_heads=AttentionHeadNum,
                  dropout_prob=DropOut,
@@ -25,7 +24,6 @@ class BertClassify(nn.Module):
         self.tnews_kinds_num = tnews_kinds_num
         self.vocab_size = vocab_size
         self.hidden_size = hidden
-        self.max_len = max_len
         self.num_hidden_layers = num_hidden_layers
         self.attention_head_num = attention_heads
         self.dropout_prob = dropout_prob
@@ -74,13 +72,23 @@ class BertClassify(nn.Module):
         pretrain_model_dict = torch.load(path)
         finetune_model_dict = self.state_dict()
         new_parameter_dict = {}
+        # 加载embedding层参数
+        for key in local2target_emb:
+            local = key
+            target = local2target_emb[key]
+            new_parameter_dict[local] = pretrain_model_dict[target]
         # 加载transformerblock层参数
         for i in range(self.num_hidden_layers):
             for key in local2target_transformer:
                 local = key % i
                 target = local2target_transformer[key] % i
                 new_parameter_dict[local] = pretrain_model_dict[target]
-        finetune_model_dict.update(new_parameter_dict)
+        for key, value in new_parameter_dict.items():
+            if key in finetune_model_dict:
+                if key == 'bert_emb.token_embeddings.weight':
+                    finetune_model_dict[key] = torch.cat([new_parameter_dict[key][:21128], finetune_model_dict[key][21128:]])
+                else:
+                    finetune_model_dict[key] = new_parameter_dict[key]
         self.load_state_dict(finetune_model_dict)
 
     def forward(self, type_ids, input_token, position_ids, part_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):

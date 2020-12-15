@@ -32,7 +32,7 @@ BalanceNum = 5000
 LearningRate = 1e-5
 AttentionMask = True
 HiddenLayerNum = 12
-SentenceLength = 256
+SentenceLength = 512
 
 # 计算BatchSize
 NormalSteps = 10000
@@ -55,6 +55,13 @@ except:
 HiddenSize = 768
 IntermediateSize = 3072
 AttentionHeadNum = 12
+
+local2target_emb = {
+    'bert_emb.token_embeddings.weight': 'bert.embeddings.word_embeddings.weight',
+    'bert_emb.position_embeddings.weight': 'bert.embeddings.position_embeddings.weight',
+    'bert_emb.emb_normalization.weight': 'bert.embeddings.LayerNorm.gamma',
+    'bert_emb.emb_normalization.bias': 'bert.embeddings.LayerNorm.beta'
+}
 
 local2target_transformer = {
     'transformer_blocks.%s.multi_attention.q_dense.weight': 'bert.encoder.layer.%s.attention.self.query.weight',
