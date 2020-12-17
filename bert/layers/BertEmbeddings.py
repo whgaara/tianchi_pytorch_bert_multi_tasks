@@ -14,12 +14,10 @@ class BertEmbeddings(nn.Module):
         self.emb_normalization = nn.LayerNorm(hidden_size)
         self.emb_dropout = nn.Dropout(p=dropout_prob)
 
-    def forward(self, type_ids, input_token, position_ids, part_ids):
-        type_embeddings = self.type_embeddings(type_ids)
+    def forward(self, input_token, position_ids):
         token_embeddings = self.token_embeddings(input_token)
         position_embeddings = self.position_embeddings(position_ids)
-        part_embeddings = self.part_embeddings(part_ids)
-        embedding_x = type_embeddings + token_embeddings + position_embeddings + part_embeddings
+        embedding_x = token_embeddings + position_embeddings
         embedding_x = self.emb_normalization(embedding_x)
         embedding_x = self.emb_dropout(embedding_x)
         return embedding_x

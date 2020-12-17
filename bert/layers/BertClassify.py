@@ -72,10 +72,10 @@ class BertClassify(nn.Module):
         finetune_model_dict = self.state_dict()
         new_parameter_dict = {}
         # 加载embedding层参数
-        # for key in local2target_emb:
-        #     local = key
-        #     target = local2target_emb[key]
-        #     new_parameter_dict[local] = pretrain_model_dict[target]
+        for key in local2target_emb:
+            local = key
+            target = local2target_emb[key]
+            new_parameter_dict[local] = pretrain_model_dict[target]
         # 加载transformerblock层参数
         for i in range(self.num_hidden_layers):
             for key in local2target_transformer:
@@ -92,9 +92,9 @@ class BertClassify(nn.Module):
                     finetune_model_dict[key] = new_parameter_dict[key]
         self.load_state_dict(finetune_model_dict)
 
-    def forward(self, type_ids, input_token, position_ids, part_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
+    def forward(self, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):
         # embedding
-        embedding_x = self.bert_emb(type_ids, input_token, position_ids, part_ids)
+        embedding_x = self.bert_emb(input_token, position_ids)
         if AttentionMask:
             attention_mask = self.gen_attention_masks(segment_ids).to(device)
         else:

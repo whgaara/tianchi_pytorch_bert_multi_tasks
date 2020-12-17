@@ -36,7 +36,7 @@ if __name__ == '__main__':
         print('完成加载本地预训练模型！\n')
     else:
         print('开始加载外部预训练模型！')
-        # bert.load_pretrain(PretrainPath)
+        bert.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！\n')
     bert = bert.to(device)
 
@@ -101,10 +101,8 @@ if __name__ == '__main__':
 
             # 正常训练
             oce_output, ocn_output, tnews_output = bert(
-                type_ids,
                 input_token,
                 position_ids,
-                part_ids,
                 segment_ids,
                 OceBatchSize,
                 OcnBatchSize,
@@ -202,10 +200,8 @@ if __name__ == '__main__':
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 oce_output, _, _ = bert(
-                    type_id,
                     input_token,
                     position_ids,
-                    part_ids,
                     segment_ids,
                     1,
                     0,
@@ -242,10 +238,8 @@ if __name__ == '__main__':
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, ocn_output, _ = bert(
-                    type_id,
                     input_token,
                     position_ids,
-                    part_ids,
                     segment_ids,
                     0,
                     1,
@@ -281,10 +275,8 @@ if __name__ == '__main__':
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, _, tnews_output = bert(
-                    type_id,
                     input_token,
                     position_ids,
-                    part_ids,
                     segment_ids,
                     0,
                     0,

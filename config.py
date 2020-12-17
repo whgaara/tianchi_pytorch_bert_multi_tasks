@@ -32,7 +32,7 @@ BalanceNum = 5000
 LearningRate = 1e-5
 AttentionMask = True
 HiddenLayerNum = 6
-SentenceLength = 256
+SentenceLength = 512
 
 # 计算BatchSize
 NormalSteps = 6000

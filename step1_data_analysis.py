@@ -210,7 +210,7 @@ class DataAnalysis(object):
         # 对训练数据进行统计
         for line in self.ocn_src_lines:
             _, sentence1, sentence2, label = tuple(line.lower().split('\t'))
-            sentence = sentence1 + '|' + sentence2
+            sentence = sentence1 + '[SEP]' + sentence2
 
             # ########################文本必做预处理操作######################## #
             # 使用专用符号代替符号表情
@@ -265,7 +265,7 @@ class DataAnalysis(object):
         # 对测试数据进行统计
         for line in self.ocn_test_lines:
             num, sentence1, sentence2 = tuple(line.lower().split('\t'))
-            sentence = sentence1 + '|' + sentence2
+            sentence = sentence1 + '[SEP]' + sentence2
 
             # ########################文本必做预处理操作######################## #
             # 使用专用符号代替符号表情

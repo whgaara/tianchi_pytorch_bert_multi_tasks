@@ -82,7 +82,7 @@ class TrainDataGenerator(object):
         for x in oce_current_tuple:
             type_list.append([0])
             label_list.append(x[0])
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
@@ -93,11 +93,11 @@ class TrainDataGenerator(object):
             label_list.append(x[0])
 
             # try
-            separator_index = x[1].split(' ').index('|')
+            separator_index = x[1].split(' ').index('[SEP]')
             separator_list.append(separator_index)
             #####
 
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
@@ -189,12 +189,12 @@ class EvalDataGenerator(object):
             if self.type_id == 1:
                 label_list.append(x[0] - 7)
                 # try
-                separator_index = x[1].split(' ').index('|')
+                separator_index = x[1].split(' ').index('[SEP]')
                 separator_list.append(separator_index)
                 #####
             if self.type_id == 2:
                 label_list.append(x[0] - 10)
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
