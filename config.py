@@ -7,7 +7,7 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 # ## 模型文件路径 ## #
 UserDict = 'data/key.txt'
 StopDict = 'data/stop.txt'
-CharsVocabPath = 'data/vocab.txt'
+CharsVocabPath = 'data/new_vocab.txt'
 C2NPicklePath = 'data/classes2num.pickle'
 EmojiPicklePath = 'data/emoji.pickle'
 
@@ -28,7 +28,7 @@ Assistant = 'data/train_data/assistant.txt'
 Epochs = 16
 TrainRate = 0.95
 BalanceNum = 5000
-LearningRate = 1e-4
+LearningRate = 1e-5
 AttentionMask = True
 HiddenLayerNum = 12
 SentenceLength = 512

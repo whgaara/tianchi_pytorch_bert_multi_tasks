@@ -79,11 +79,6 @@ class BertClassify(nn.Module):
                 new_parameter_dict[local] = pretrain_model_dict[target]
         for key, value in new_parameter_dict.items():
             if key in finetune_model_dict:
-                # if key == 'bert_emb.token_embeddings.weight':
-                #     finetune_model_dict[key] = torch.cat([new_parameter_dict[key][:21128].to(device), finetune_model_dict[key][21128:].to(device)])
-                # elif key == 'bert_emb.position_embeddings.weight':
-                #     finetune_model_dict[key] = new_parameter_dict[key][:SentenceLength].to(device)
-                # else:
                 finetune_model_dict[key] = new_parameter_dict[key]
         self.load_state_dict(finetune_model_dict)
 
@@ -112,7 +107,6 @@ class BertClassify(nn.Module):
             oce_attention = self.dropout2(self.softmax_d1(oce_attention).unsqueeze(1))
             oce_value = self.oce_layer3(transformer_oce).contiguous().view(-1, self.batch_size, 7)
             oce_output = torch.matmul(oce_attention, oce_value).squeeze(1)
-            # oce_output = self.oce_layer1(transformer_oce)
         else:
             oce_output = None
         if ocn_end_id > 0:
@@ -121,7 +115,6 @@ class BertClassify(nn.Module):
             ocn_attention = self.dropout2(self.softmax_d1(ocn_attention).unsqueeze(1))
             ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
             ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
-            # ocn_output = self.ocn_layer1(transformer_ocn)
         else:
             ocn_output = None
         if tnews_end_id > 0:
@@ -130,7 +123,6 @@ class BertClassify(nn.Module):
             tnews_attention = self.dropout2(self.softmax_d1(tnews_attention).unsqueeze(1))
             tnews_value = self.tnews_layer3(transformer_tnews).contiguous().view(-1, self.batch_size, 15)
             tnews_output = torch.matmul(tnews_attention, tnews_value).squeeze(1)
-            # tnews_output = self.tnews_layer1(transformer_tnews)
         else:
             tnews_output = None
 
