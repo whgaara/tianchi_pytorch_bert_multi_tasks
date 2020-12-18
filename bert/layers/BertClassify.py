@@ -40,10 +40,8 @@ class BertClassify(nn.Module):
                 intermediate_size=self.intermediate_size).to(device)
             for _ in range(self.num_hidden_layers)
         )
-        # self.oce_layer1 = nn.Linear(self.hidden_size, 7)
-        # self.ocn_layer1 = nn.Linear(self.hidden_size, 3)
-        # self.tnews_layer1 = nn.Linear(self.hidden_size, 15)
-        # self.dropout1 = nn.Dropout(0.1)
+        self.pooler = nn.Linear(self.hidden_size, self.hidden_size)
+        self.tanh = nn.Tanh()
         self.softmax_d1 = nn.Softmax(dim=-1)
 
         self.oce_layer2 = nn.Linear(self.hidden_size, self.batch_size)
@@ -51,9 +49,6 @@ class BertClassify(nn.Module):
         self.tnews_layer2 = nn.Linear(self.hidden_size, self.batch_size)
         # self.attention_layer = nn.Linear(self.hidden_size, self.batch_size)
         self.dropout2 = nn.Dropout(0.1)
-        # self.oce_layer_norm2 = nn.LayerNorm(7)
-        # self.ocn_layer_norm2 = nn.LayerNorm(3)
-        # self.tnews_layer_norm2 = nn.LayerNorm(15)
 
         self.oce_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 7)
         self.ocn_layer3 = nn.Linear(self.hidden_size, (self.batch_size) * 3)
@@ -109,6 +104,8 @@ class BertClassify(nn.Module):
                 feedforward_x = self.transformer_blocks[i](feedforward_x, attention_mask)
 
         # classify
+        feedforward_x = self.tanh(self.pooler(feedforward_x))
+
         if oce_end_id > 0:
             transformer_oce = feedforward_x[:oce_end_id, 0, :]
             oce_attention = self.oce_layer2(transformer_oce)
