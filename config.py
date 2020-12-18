@@ -7,8 +7,7 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 # ## 模型文件路径 ## #
 UserDict = 'data/key.txt'
 StopDict = 'data/stop.txt'
-SourceVocabPath = 'data/vocab.txt'
-CharsVocabPath = 'data/new_vocab.txt'
+CharsVocabPath = 'data/vocab.txt'
 C2NPicklePath = 'data/classes2num.pickle'
 EmojiPicklePath = 'data/emoji.pickle'
 
