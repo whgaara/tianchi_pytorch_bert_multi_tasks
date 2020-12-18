@@ -125,15 +125,6 @@ class BertClassify(nn.Module):
             ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
             ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
             # ocn_output = self.ocn_layer1(transformer_ocn)
-            # try
-            # tmp_list = []
-            # for i, j in enumerate(separators.tolist()):
-            #     tmp_list.append(feedforward_x[oce_end_id+i:oce_end_id+i+1, j+1, :])
-            # transformer_ocn = torch.cat(tmp_list)
-            # transformer_ocn = self.dropout2(self.ocn_layer1(transformer_ocn))
-            # transformer_ocn = self.ocn_layer2(transformer_ocn)
-            # ocn_output = transformer_ocn
-            #####
         else:
             ocn_output = None
         if tnews_end_id > 0:

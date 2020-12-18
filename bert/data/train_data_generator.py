@@ -107,7 +107,7 @@ class TrainDataGenerator(object):
         for x in tnews_current_tuple:
             type_list.append([2])
             label_list.append(x[0])
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' '))
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
