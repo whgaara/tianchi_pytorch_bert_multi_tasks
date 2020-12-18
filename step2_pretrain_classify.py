@@ -87,13 +87,8 @@ if __name__ == '__main__':
             type_ids = train_batch_data['type_id']
             input_token = train_batch_data['input_token_ids']
             position_ids = train_batch_data['position_ids']
-            part_ids = train_batch_data['part_ids']
             segment_ids = train_batch_data['segment_ids']
             labels = train_batch_data['token_ids_labels']
-
-            # try
-            separators = train_batch_data['separators']
-            #####
 
             oce_label = labels[:OceBatchSize]
             ocn_label = labels[OceBatchSize:OceBatchSize+OcnBatchSize]
@@ -196,7 +191,6 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
-                part_ids = eval_data['part_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 oce_output, _, _ = bert(
@@ -233,8 +227,6 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
-                part_ids = eval_data['part_ids'].to(device)
-                separators = eval_data['separators'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, ocn_output, _ = bert(
@@ -271,7 +263,6 @@ if __name__ == '__main__':
                 type_id = eval_data['type_id'].to(device)
                 input_token = eval_data['input_token_ids'].to(device)
                 position_ids = eval_data['position_ids'].to(device)
-                part_ids = eval_data['part_ids'].to(device)
                 segment_ids = eval_data['segment_ids'].to(device)
                 label = eval_data['token_ids_labels'].tolist()[0]
                 _, _, tnews_output = bert(

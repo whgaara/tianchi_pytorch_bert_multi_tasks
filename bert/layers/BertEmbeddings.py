@@ -7,10 +7,10 @@ from config import device, HiddenSize, SentenceLength, VocabSize
 class BertEmbeddings(nn.Module):
     def __init__(self, vocab_size=VocabSize, max_len=SentenceLength, hidden_size=HiddenSize, dropout_prob=0.1):
         super(BertEmbeddings, self).__init__()
-        self.type_embeddings = nn.Embedding(3, hidden_size)
+        # self.type_embeddings = nn.Embedding(3, hidden_size)
         self.token_embeddings = nn.Embedding(vocab_size, hidden_size)
         self.position_embeddings = nn.Embedding(max_len, hidden_size)
-        self.part_embeddings = nn.Embedding(3, hidden_size)
+        # self.part_embeddings = nn.Embedding(3, hidden_size)
         self.emb_normalization = nn.LayerNorm(hidden_size)
         self.emb_dropout = nn.Dropout(p=dropout_prob)
 

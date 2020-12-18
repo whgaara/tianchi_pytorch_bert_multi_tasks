@@ -79,7 +79,11 @@ class BertClassify(nn.Module):
                 new_parameter_dict[local] = pretrain_model_dict[target]
         for key, value in new_parameter_dict.items():
             if key in finetune_model_dict:
-                finetune_model_dict[key] = new_parameter_dict[key]
+                if key == 'bert_emb.token_embeddings.weight':
+                    finetune_model_dict[key] = torch.cat(
+                        [new_parameter_dict[key][:21128].to(device), finetune_model_dict[key][21128:].to(device)])
+                else:
+                    finetune_model_dict[key] = new_parameter_dict[key]
         self.load_state_dict(finetune_model_dict)
 
     def forward(self, input_token, position_ids, segment_ids, oce_end_id, ocn_end_id, tnews_end_id):

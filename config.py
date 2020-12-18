@@ -38,9 +38,12 @@ NormalSteps = 10000
 OceTrainCount = len(open(OceTrainPath, 'r', encoding='utf-8').readlines())
 OcnTrainCount = len(open(OcnTrainPath, 'r', encoding='utf-8').readlines())
 TnewsTrainCount = len(open(TnewsTrainPath, 'r', encoding='utf-8').readlines())
-OceBatchSize = OceTrainCount // NormalSteps
-OcnBatchSize = OcnTrainCount // NormalSteps
-TnewsBatchSize = TnewsTrainCount // NormalSteps
+# OceBatchSize = OceTrainCount // NormalSteps
+# OcnBatchSize = OcnTrainCount // NormalSteps
+# TnewsBatchSize = TnewsTrainCount // NormalSteps
+OceBatchSize = 1
+OcnBatchSize = 1
+TnewsBatchSize = 1
 FinetunePath = 'checkpoint/finetune/bert_classify_%s_%s.model' % (SentenceLength, HiddenLayerNum)
 PretrainPath = 'checkpoint/pretrain/pytorch_model.bin'
 # ## 训练调试参数结束 ## #

@@ -26,8 +26,8 @@ class TrainDataGenerator(object):
                 if line:
                     line = line.strip()
                     line = line.split('\t')
-                    if line[0] and line[1]:
-                        self.ocn_data_tuple.append([self.classes2num[line[0]]-7, line[1]])
+                    if line[0] and line[1] and line[2]:
+                        self.ocn_data_tuple.append([self.classes2num[line[0]]-7, line[1], line[2]])
         with open(tnews_corpus_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line:
@@ -73,45 +73,36 @@ class TrainDataGenerator(object):
             return None
 
         type_list = []
-        part_list = []
         label_list = []
         tokens_list = []
         segments_list = []
-        separator_list = []
 
         for x in oce_current_tuple:
             type_list.append([0])
             label_list.append(x[0])
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
-            part_list.append([1] * len(token_ids))
             segments_list.append([1] * len(token_ids))
         for x in ocn_current_tuple:
             type_list.append([1])
             label_list.append(x[0])
-
-            # try
-            separator_index = x[1].split(' ').index('[SEP]')
-            separator_list.append(separator_index)
-            #####
-
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
-            tmp_list = [1] * separator_index + [2] * (len(token_ids)-separator_index)
-            part_list.append(tmp_list)
             segments_list.append([1] * len(token_ids))
         for x in tnews_current_tuple:
             type_list.append([2])
             label_list.append(x[0])
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
-            part_list.append([1] * len(token_ids))
             segments_list.append([1] * len(token_ids))
 
         batch_max_len = min(batch_max_len, SentenceLength)
@@ -119,23 +110,16 @@ class TrainDataGenerator(object):
         for i, tokens in enumerate(tokens_list):
             if len(tokens) < batch_max_len:
                 tokens_list[i] = tokens_list[i] + [0] * (batch_max_len - len(tokens))
-                part_list[i] = part_list[i] + [0] * (batch_max_len - len(tokens))
                 segments_list[i] = segments_list[i] + [0] * (batch_max_len - len(tokens))
             else:
                 tokens_list[i] = tokens_list[i][:batch_max_len]
-                part_list[i] = part_list[i][:batch_max_len]
                 segments_list[i] = segments_list[i][:batch_max_len]
 
         output['type_id'] = type_list
         output['input_token_ids'] = tokens_list
         output['position_ids'] = [[x for x in range(batch_max_len)] for i in range(oce_batch_size + ocn_batch_size + tnews_batch_size)]
-        output['part_ids'] = part_list
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
-
-        # try
-        output['separators'] = separator_list
-        #####
 
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
         return instance
@@ -177,34 +161,25 @@ class EvalDataGenerator(object):
         else:
             return None
 
-        part_list = []
         label_list = []
         tokens_list = []
         segments_list = []
-        separator_list = []
 
         for x in current_tuple:
             if self.type_id == 0:
                 label_list.append(x[0])
             if self.type_id == 1:
                 label_list.append(x[0] - 7)
-                # try
-                separator_index = x[1].split(' ').index('[SEP]')
-                separator_list.append(separator_index)
-                #####
             if self.type_id == 2:
                 label_list.append(x[0] - 10)
-            token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
+            if self.type_id == 1:
+                token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
+            else:
+                token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
                 batch_max_len = len(token_ids)
             tokens_list.append(token_ids)
-            if self.type_id == 0:
-                part_list.append([1] * len(token_ids))
-            if self.type_id == 1:
-                tmp_list = [1] * separator_index + [2] * (len(token_ids) - separator_index)
-                part_list.append(tmp_list)
-            if self.type_id == 2:
-                part_list.append([1] * len(token_ids))
             segments_list.append([1] * len(token_ids))
 
         batch_max_len = min(batch_max_len, SentenceLength)
@@ -212,21 +187,15 @@ class EvalDataGenerator(object):
         for i, tokens in enumerate(tokens_list):
             if len(tokens) < batch_max_len:
                 tokens_list[i] = tokens_list[i] + [0] * (batch_max_len - len(tokens))
-                part_list[i] = part_list[i] + [0] * (batch_max_len - len(tokens))
                 segments_list[i] = segments_list[i] + [0] * (batch_max_len - len(tokens))
             else:
                 tokens_list[i] = tokens_list[i][:batch_max_len]
-                part_list[i] = part_list[i][:batch_max_len]
                 segments_list[i] = segments_list[i][:batch_max_len]
 
         output['type_id'] = [self.type_id]
         output['input_token_ids'] = tokens_list
         output['position_ids'] = [[x for x in range(batch_max_len)]]
-        output['part_ids'] = part_list
         output['segment_ids'] = segments_list
         output['token_ids_labels'] = label_list
-        # try
-        output['separators'] = separator_list
-        #####
         instance = {k: torch.tensor(v, dtype=torch.long) for k, v in output.items()}
         return instance
