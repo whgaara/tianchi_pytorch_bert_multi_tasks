@@ -174,7 +174,11 @@ class EvalDataGenerator(object):
                 label_list.append(x[0] - 10)
             # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if self.type_id == 1:
-                token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
+                try:
+                    token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
+                except:
+                    token_ids = [1, 2, 3]
+                    print(x)
             else:
                 token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
