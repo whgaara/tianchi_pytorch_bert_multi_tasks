@@ -143,8 +143,12 @@ class EvalDataGenerator(object):
                 if line:
                     line = line.strip()
                     line = line.split('\t')
-                    if line[0] and line[1]:
-                        self.data_tuple.append([self.classes2num[line[0]], line[1]])
+                    if self.type_id == 1:
+                        if line[0] and line[1] and line[2]:
+                            self.data_tuple.append([self.classes2num[line[0]], line[1], line[2]])
+                    else:
+                        if line[0] and line[1]:
+                            self.data_tuple.append([self.classes2num[line[0]], line[1]])
         self.source_eval_data = self.data_tuple
         random.shuffle(self.data_tuple)
 
@@ -172,13 +176,8 @@ class EvalDataGenerator(object):
                 label_list.append(x[0] - 7)
             if self.type_id == 2:
                 label_list.append(x[0] - 10)
-            # token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + x[1].split(' ') + ['[SEP]'])
             if self.type_id == 1:
-                try:
-                    token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
-                except:
-                    token_ids = [1, 2, 3]
-                    print(x)
+                token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'] + list(x[2]) + ['[SEP]'])
             else:
                 token_ids = self.tokenizer.tokens_to_ids(['[CLS]'] + list(x[1]) + ['[SEP]'])
             if len(token_ids) > batch_max_len:
