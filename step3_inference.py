@@ -40,8 +40,9 @@ class Inference(object):
                 line = line.strip().split('\t')
                 num = line[0]
                 input = line[1]
-                current_words = input.split(' ')
-                current_words = ['[CLS]'] + current_words + ['SEP']
+                # current_words = input.split(' ')
+                current_words = list(input)
+                current_words = ['[CLS]'] + current_words + ['[SEP]']
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
@@ -66,15 +67,17 @@ class Inference(object):
             if line:
                 line = line.strip().split('\t')
                 num = line[0]
-                input = line[1]
-                current_words = input.split(' ')
-                current_words = ['[CLS]'] + current_words + ['SEP']
+                input1 = line[1]
+                input2 = line[2]
+                # current_words = input.split(' ')
+                input1 = list(input1)
+                input2 = list(input2)
+                current_words = ['[CLS]'] + input1 + ['[SEP]'] + input2 + ['[SEP]']
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
                 position_ids = torch.tensor(position_ids, dtype=torch.long).unsqueeze(0).to(device)
-                segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(
-                    0).to(device)
+                segment_ids = torch.tensor([1 if x else 0 for x in tokens_id], dtype=torch.long).unsqueeze(0).to(device)
                 _, ocn_output, _ = self.model(
                     input_token,
                     position_ids,
@@ -95,8 +98,9 @@ class Inference(object):
                 line = line.strip().split('\t')
                 num = line[0]
                 input = line[1]
-                current_words = input.split(' ')
-                current_words = ['[CLS]'] + current_words + ['SEP']
+                current_words = list(input)
+                # current_words = input.split(' ')
+                current_words = ['[CLS]'] + current_words + ['[SEP]']
                 tokens_id = self.tokenizer.tokens_to_ids(current_words)
                 input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
                 position_ids = [i for i in range(len(tokens_id))]
