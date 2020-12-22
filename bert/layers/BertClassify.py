@@ -121,7 +121,7 @@ class BertClassify(nn.Module):
             # ocn_value = self.ocn_layer3(transformer_ocn).contiguous().view(-1, self.batch_size, 3)
             # ocn_output = torch.matmul(ocn_attention, ocn_value).squeeze(1)
             ocn_attention = self.ocn_layer2(transformer_ocn)
-            oce_output = self.ocn_layer3(ocn_attention)
+            ocn_output = self.ocn_layer3(ocn_attention)
         else:
             ocn_output = None
         if tnews_end_id > 0:
