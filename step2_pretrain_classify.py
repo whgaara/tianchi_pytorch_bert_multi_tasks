@@ -21,12 +21,12 @@ def get_f1(l_t, l_p):
 
 
 if __name__ == '__main__':
-    with open('data/label_weights.json', 'r', encoding='utf-8') as f:
-        for line in f:
-            label_weights_dict = json.loads(line)
-        oce_weights = torch.tensor(label_weights_dict['OCEMOTION']).to(device, non_blocking=True)
-        ocn_weights = torch.tensor(label_weights_dict['OCNLI']).to(device, non_blocking=True)
-        tnews_weights = torch.tensor(label_weights_dict['TNEWS']).to(device, non_blocking=True)
+    # with open('data/label_weights.json', 'r', encoding='utf-8') as f:
+    #     for line in f:
+    #         label_weights_dict = json.loads(line)
+    #     oce_weights = torch.tensor(label_weights_dict['OCEMOTION']).to(device, non_blocking=True)
+    #     ocn_weights = torch.tensor(label_weights_dict['OCNLI']).to(device, non_blocking=True)
+    #     tnews_weights = torch.tensor(label_weights_dict['TNEWS']).to(device, non_blocking=True)
 
     with open(C2NPicklePath, 'rb') as f:
         classes2num = pickle.load(f)
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     oce_train_total, ocn_train_total, tnews_train_total = batch_train_set.get_length()
 
     optim = Adam(bert.parameters(), lr=LearningRate)
-    oce_criterion = nn.CrossEntropyLoss(oce_weights).to(device)
-    ocn_criterion = nn.CrossEntropyLoss(ocn_weights).to(device)
-    tnews_criterion = nn.CrossEntropyLoss(tnews_weights).to(device)
+    oce_criterion = nn.CrossEntropyLoss().to(device)
+    ocn_criterion = nn.CrossEntropyLoss().to(device)
+    tnews_criterion = nn.CrossEntropyLoss().to(device)
 
     for epoch in range(Epochs):
         oce_pred_list = []
@@ -117,7 +117,10 @@ if __name__ == '__main__':
             oce_loss_weight = torch.div(oce_loss, oce_loss + ocn_loss + tnews_loss)
             ocn_loss_weight = torch.div(ocn_loss, oce_loss + ocn_loss + tnews_loss)
             tnews_loss_weight = torch.div(tnews_loss, oce_loss + ocn_loss + tnews_loss)
-            total_loss = oce_loss + ocn_loss + tnews_loss
+            total_loss = oce_loss * oce_loss_weight \
+                         + ocn_loss * ocn_loss_weight \
+                         + tnews_loss * tnews_loss_weight
+            # total_loss = oce_loss + ocn_loss + tnews_loss
             print_loss = total_loss.item()
 
             total_loss.backward()
