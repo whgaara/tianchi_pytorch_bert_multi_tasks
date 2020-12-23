@@ -64,6 +64,7 @@ if __name__ == '__main__':
     tnews_criterion = nn.CrossEntropyLoss().to(device)
 
     for epoch in range(Epochs):
+        print(get_time())
         oce_pred_list = []
         oce_label_list = []
         ocn_pred_list = []
@@ -117,9 +118,9 @@ if __name__ == '__main__':
             oce_loss_weight = torch.div(oce_loss, oce_loss + ocn_loss + tnews_loss)
             ocn_loss_weight = torch.div(ocn_loss, oce_loss + ocn_loss + tnews_loss)
             tnews_loss_weight = torch.div(tnews_loss, oce_loss + ocn_loss + tnews_loss)
-            total_loss = oce_loss * oce_loss_weight \
-                         + ocn_loss * ocn_loss_weight \
-                         + tnews_loss * tnews_loss_weight
+            total_loss = oce_loss * (1/oce_loss_weight) \
+                         + ocn_loss * (1/ocn_loss_weight) \
+                         + tnews_loss * (1/tnews_loss_weight)
             # total_loss = oce_loss + ocn_loss + tnews_loss
             print_loss = total_loss.item()
 
